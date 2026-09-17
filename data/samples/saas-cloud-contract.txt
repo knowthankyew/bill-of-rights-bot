@@ -1,0 +1,16 @@
+CLOUDWORK PRO ENTERPRISE WORKSPACE MASTER SUBSCRIPTION AGREEMENT
+
+1. SUBSCRIPTION TERM & AUTOMATIC RENEWAL
+The Initial Term of this Agreement shall be twelve (12) months. Thereafter, the contract automatically renews for successive one-year periods unless either party delivers written notice of non-renewal at least 60 days prior to the expiration of the then-current term.
+
+2. FEES, INVOICING & RATE ADJUSTMENTS
+Customer shall pay all annual fees in advance. CloudWork reserves the right to increase subscription fees at our sole discretion upon renewal without advance notice.
+
+3. CANCELLATION & TERMINATION RETENTION PROCEDURE
+In order to cancel your auto-renewing enterprise license, you must complete an exit interview and cancellation survey before cancellation can take effect. Furthermore, you must speak with our retention account manager to confirm offboarding protocol. Cancellation requires manager approval and cannot be processed directly through the self-service web admin console.
+
+4. PRE-RENEWAL OBLIGATIONS & RESTRICTIONS
+Notice of cancellation must be submitted no later than 60 days before the renewal date. Any cancellation submitted within 59 days of renewal is void and the contract shall automatically renew for the full subsequent 12-month period.
+
+5. RESTITUTION WAIVER
+Customer waives all rights to dispute renewal charges. All charges are final and non-refundable under any circumstances.

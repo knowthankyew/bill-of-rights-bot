@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "jurisdictionCode": "DE",
+  "jurisdictionName": "Delaware",
+  "statuteTitle": "Delaware Automatic Renewal Protections",
+  "codification": "Del. Code Ann. tit. 6, § 2734",
+  "lastAudited": "2026-09-01",
+  "officialSourceUrl": "https://delcode.delaware.gov/title6/c027/sc02/index.html",
+  "rules": [
+    {
+      "id": "DE-ARL-01",
+      "category": "InconspicuousRenewal",
+      "trapName": "Failure to Clearly and Conspicuously Disclose Renewal Terms",
+      "severity": "Unlawful",
+      "statutoryCitation": "Del. Code Ann. tit. 6, § 2734(a)",
+      "statuteSummary": "Any person that sells or offers consumer contracts with automatic renewal provisions must clearly and conspicuously disclose the renewal terms, including the recurring cost, length of renewal term, and cancellation procedure.",
+      "triggerPatterns": [
+        "renews?\\s+automatically\\s+for\\s+(?:an\\s+additional\\s+)?term\\s+without\\s+notice",
+        "renewed\\s+without\\s+further\\s+affirmative\\s+consent"
+      ],
+      "negativeExceptions": [
+        "clearly disclosed renewal terms",
+        "notice provided in advance"
+      ],
+      "disputeTemplate": "Under Del. Code Ann. tit. 6, § 2734(a), automatic renewal provisions must be clear and conspicuous. Failure to clearly present recurring terms renders the clause non-compliant."
+    },
+    {
+      "id": "DE-ARL-02",
+      "category": "PreRenewalNotice",
+      "trapName": "Mandatory 30-to-60 Day Renewal Reminder Notice",
+      "severity": "Unlawful",
+      "statutoryCitation": "Del. Code Ann. tit. 6, § 2734(b)",
+      "statuteSummary": "Requires written notice between 30 and 60 days before the cancellation deadline for contracts of 12 months or longer.",
+      "triggerPatterns": [
+        "contracts?\\s+(?:for\\s+12\\s+months|annual\\s+term).*auto-?renews?",
+        "successive\\s+(?:one-year|12-month)\\s+terms\\s+without\\s+written\\s+notice"
+      ],
+      "negativeExceptions": [
+        "notice 30 to 60 days in advance",
+        "written reminder sent before renewal"
+      ],
+      "disputeTemplate": "Under Del. Code Ann. tit. 6, § 2734(b), automatic renewal contracts of 12 months or longer require clear written notice 30 to 60 days before renewal."
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "jurisdictionCode": "NY",
+  "jurisdictionName": "New York",
+  "statuteTitle": "New York Automatic Renewal Law",
+  "codification": "N.Y. Gen. Bus. Law § 527-a",
+  "lastAudited": "2026-09-01",
+  "officialSourceUrl": "https://www.nysenate.gov/legislation/laws/GBS/527-A",
+  "rules": [
+    {
+      "id": "NY-ARL-01",
+      "category": "AsymmetricCancellation",
+      "trapName": "New York Online Cancellation Mechanism Violation",
+      "severity": "Unlawful",
+      "statutoryCitation": "N.Y. Gen. Bus. Law § 527-a(3)",
+      "statuteSummary": "A consumer who accepts an automatic renewal or continuous service offer online must be allowed to terminate the automatic renewal or continuous service exclusively online, which may include a termination email formatted and provided by the business that a consumer can send without additional information.",
+      "triggerPatterns": [
+        "(?:must|required to)\\s+call\\s+(?:customer\\s+care|support|phone|representative)\\s+to\\s+cancel",
+        "cancellations?\\s+(?:cannot|not\\s+accepted)\\s+(?:online|via\\s+email)",
+        "cancel(?:lation)?\\s+(?:accepted\\s+only|submitted\\s+only)\\s+by\\s+(?:mail|phone)"
+      ],
+      "negativeExceptions": [
+        "terminate exclusively online",
+        "cancel directly in account settings"
+      ],
+      "disputeTemplate": "Under N.Y. Gen. Bus. Law § 527-a(3), New York consumers who enroll online must be provided an exclusive online cancellation mechanism. Refusing online cancellation is an explicit statutory violation."
+    },
+    {
+      "id": "NY-ARL-02",
+      "category": "PreRenewalNotice",
+      "trapName": "Failure to Provide 15-to-30 Day Renewal Notice",
+      "severity": "Unlawful",
+      "statutoryCitation": "N.Y. Gen. Bus. Law § 527-a(2)",
+      "statuteSummary": "If an automatic renewal offer has an initial term of 12 months or longer and automatically renews for a term of more than one month, the business must provide clear and conspicuous written notice 15 to 30 days before the renewal date stating that the renewal will occur.",
+      "triggerPatterns": [
+        "renews?\\s+automatically\\s+for\\s+(?:an\\s+additional\\s+)?(?:year|12\\s+months|annual\\s+term)",
+        "annual\\s+subscription\\s+will\\s+auto-?renew\\s+without\\s+(?:written\\s+)?notice",
+        "notice\\s+of\\s+cancellation\\s+(?:at\\s+least|no\\s+later\\s+than)\\s+(?:30|60)\\s+days\\s+prior"
+      ],
+      "negativeExceptions": [
+        "notice 15 to 30 days prior to renewal",
+        "written reminder will be provided"
+      ],
+      "disputeTemplate": "Under N.Y. Gen. Bus. Law § 527-a(2), contracts of 12 months or longer that auto-renew require formal written notice between 15 and 30 days in advance. Failure to send notice renders the renewal void and unenforceable under § 527-a(4)."
+    }
+  ]
+}

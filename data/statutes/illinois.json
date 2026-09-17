@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "jurisdictionCode": "IL",
+  "jurisdictionName": "Illinois",
+  "statuteTitle": "Illinois Automatic Contract Renewal Act",
+  "codification": "815 ILCS 601/",
+  "lastAudited": "2026-09-01",
+  "officialSourceUrl": "https://www.ilga.gov/legislation/ilcs/ilcs3.asp?ActID=2361&ChapterID=67",
+  "rules": [
+    {
+      "id": "IL-ACRA-01",
+      "category": "PreRenewalNotice",
+      "trapName": "Failure to Provide 30-to-60 Day Written Notice",
+      "severity": "Unlawful",
+      "statutoryCitation": "815 ILCS 601/10(b)",
+      "statuteSummary": "Any business that offers a contract with an automatic renewal clause for a term of 12 months or more must provide written notice to the consumer 30 to 60 days before the cancellation deadline or renewal date.",
+      "triggerPatterns": [
+        "contract\\s+automatically\\s+renews?\\s+(?:for\\s+a\\s+period\\s+of\\s+12\\s+months|for\\s+one\\s+year)",
+        "renew(?:s|al)\\s+(?:will\\s+occur|occurs)\\s+automatically\\s+unless\\s+cancelled\\s+prior",
+        "renewed\\s+for\\s+successive\\s+(?:one-year|annual)\\s+periods"
+      ],
+      "negativeExceptions": [
+        "notice 30 to 60 days before",
+        "written notice will be sent 30 days prior"
+      ],
+      "disputeTemplate": "Under 815 ILCS 601/10(b), Illinois requires written disclosure 30 to 60 days before the renewal date for annual contracts. Failure to provide this notice invalidates automatic contract extension."
+    },
+    {
+      "id": "IL-ACRA-02",
+      "category": "AsymmetricCancellation",
+      "trapName": "Illinois Online Cancellation Barrier",
+      "severity": "Unlawful",
+      "statutoryCitation": "815 ILCS 601/10(c)",
+      "statuteSummary": "A consumer who enters into an automatic renewal contract online must be allowed to terminate the contract online without requiring a phone call or in-person visit.",
+      "triggerPatterns": [
+        "(?:must|required to)\\s+call\\s+(?:customer\\s+support|phone|representative)\\s+to\\s+cancel",
+        "cancel(?:lation)?\\s+(?:only\\s+by|in\\s+person|by\\s+phone)"
+      ],
+      "negativeExceptions": [
+        "terminate the contract online",
+        "cancel online at any time"
+      ],
+      "disputeTemplate": "815 ILCS 601/10(c) mandates that Illinois consumers who subscribe online must be permitted to cancel online without telephonic or physical hurdles."
+    }
+  ]
+}

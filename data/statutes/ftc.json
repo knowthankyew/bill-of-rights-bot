@@ -1,0 +1,103 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "jurisdictionCode": "FTC",
+  "jurisdictionName": "Federal Trade Commission & ROSCA",
+  "statuteTitle": "FTC Negative Option Rule (Click-to-Cancel) & ROSCA",
+  "codification": "16 CFR Part 425 & 15 U.S.C. §§ 8401–8405",
+  "lastAudited": "2026-09-01",
+  "officialSourceUrl": "https://www.ftc.gov/legal-library/browse/rules/negative-option-rule",
+  "rules": [
+    {
+      "id": "FTC-CTC-01",
+      "category": "AsymmetricCancellation",
+      "trapName": "Asymmetric Cancellation ('Click-to-Cancel' Violation)",
+      "severity": "Unlawful",
+      "statutoryCitation": "16 CFR § 425.6(a) & 15 U.S.C. § 8403",
+      "statuteSummary": "The FTC Click-to-Cancel rule mandates that cancellation mechanisms must be at least as simple as the mechanism used to enroll. Consumers who subscribe online must be permitted to cancel online in the same medium without mandatory phone calls, postal mail, or interactive obstacles.",
+      "triggerPatterns": [
+        "(?:must|required to|only way to|can only)\\s+cancel\\s+(?:by|via|through)?\\s*(?:calling|phone|calling us|telephoning|speaking to|contacting customer support by phone)",
+        "call\\s+(?:1-800|1-888|1-877|1-866|1-855|\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4})\\s+to\\s+cancel",
+        "cancellations?\\s+(?:are\\s+not|cannot\\s+be)\\s+(?:accepted|processed|handled)\\s+(?:online|via email|by email|through the website|through your account)",
+        "cancel(?:lation)?\\s+(?:must be submitted|accepted only)\\s+(?:in writing|by certified mail|by postal mail|via certified letter|in person)"
+      ],
+      "negativeExceptions": [
+        "or\\s+(?:you may\\s+)?cancel\\s+online",
+        "cancel(?:led)?\\s+(?:at any time\\s+)?(?:via|through|in)\\s+(?:your\\s+)?(?:account|settings|portal|dashboard)",
+        "click(?:ing)?\\s+(?:on\\s+)?(?:the\\s+)?[\"']?cancel(?:\\s+subscription)?[\"']?\\s+button"
+      ],
+      "disputeTemplate": "Under 16 CFR § 425.6(a) (FTC Negative Option Rule) and ROSCA (15 U.S.C. § 8403), sellers must provide a simple cancellation mechanism that is at least as accessible as the signup flow. Requiring phone contact, in-person visits, or physical mail to cancel an online subscription is an explicit federal violation."
+    },
+    {
+      "id": "FTC-SAVE-02",
+      "category": "RetentionMaze",
+      "trapName": "Retention Gauntlet / Unsolicited 'Saves' Pitch",
+      "severity": "Unlawful",
+      "statutoryCitation": "16 CFR § 425.6(b)",
+      "statuteSummary": "Prohibits sellers from subjecting consumers attempting to cancel to unsolicited retention offers ('saves') or obstructive multi-step gauntlets unless the consumer affirmatively consents to hear or see such offers prior to cancellation.",
+      "triggerPatterns": [
+        "(?:prior to|before|in order to)\\s+cancel(?:ling)?,?\\s*(?:you must|required to)\\s*(?:speak with|chat with|contact)\\s*(?:a|our)\\s*(?:specialist|retention|representative|agent|account manager)",
+        "(?:must|required to)\\s*(?:complete|finish|submit)\\s*(?:a|an)\\s*(?:exit\\s+interview|cancellation\\s+survey|feedback\\s+session)\\s*(?:before|prior to|to complete)\\s*cancellation",
+        "cancellation\\s+(?:requires|subject to)\\s+(?:manager\\s+approval|retention\\s+review|consultation)"
+      ],
+      "negativeExceptions": [
+        "optional survey",
+        "if you wish to provide feedback"
+      ],
+      "disputeTemplate": "Under 16 CFR § 425.6(b), sellers cannot subject consumers attempting to cancel to mandatory retention pitches or agent gauntlets without prior affirmative consent to receive such offers."
+    },
+    {
+      "id": "FTC-DISC-03",
+      "category": "InconspicuousRenewal",
+      "trapName": "Inconspicuous / Buried Negative Option Terms",
+      "severity": "Unlawful",
+      "statutoryCitation": "16 CFR § 425.3 & 15 U.S.C. § 8403",
+      "statuteSummary": "Sellers must clearly and conspicuously disclose all material terms—including that charges will recur, the billing frequency, the cancellation deadline, and the cancellation mechanism—prior to collecting billing info.",
+      "triggerPatterns": [
+        "automatically\\s+renews?\\s+(?:at\\s+the\\s+then-current\\s+rate|without\\s+further\\s+notice|indefinitely)\\s+unless\\s+cancelled",
+        "renew(?:s|al)\\s+(?:will\\s+occur|occurs)\\s+automatically\\s+without\\s+(?:prior\\s+)?notice",
+        "recurring\\s+basis\\s+(?:until|unless)\\s+(?:you\\s+)?notify\\s+us"
+      ],
+      "negativeExceptions": [
+        "we will send you a reminder notice",
+        "advance written notice will be provided"
+      ],
+      "disputeTemplate": "Under 16 CFR § 425.3, all recurring billing terms must be clearly and conspicuously disclosed with explicit timing disclosures. Burying auto-renewal terms in generalized boilerplate without advance reminders violates the FTC Negative Option Rule."
+    },
+    {
+      "id": "FTC-HIKE-04",
+      "category": "UnilateralPriceHike",
+      "trapName": "Unilateral Price Increase Without Re-Consent",
+      "severity": "Watch",
+      "statutoryCitation": "16 CFR § 425.5 & 15 U.S.C. § 8402",
+      "statuteSummary": "Sellers cannot misrepresent or unilaterally escalate recurring subscription fees without advance clear and conspicuous notice and an affirmative, frictionless opportunity to cancel before the new rate applies.",
+      "triggerPatterns": [
+        "reserves?\\s+the\\s+right\\s+to\\s+(?:change|increase|modify|alter)\\s+(?:subscription\\s+)?(?:fees|prices|rates)\\s+at\\s+(?:any\\s+time|our\\s+sole\\s+discretion)\\s+without\\s+(?:prior\\s+)?notice",
+        "fees\\s+(?:may|will)\\s+increase\\s+(?:automatically|upon\\s+renewal)\\s+without\\s+(?:advance\\s+)?notice",
+        "prices?\\s+subject\\s+to\\s+change\\s+without\\s+notice"
+      ],
+      "negativeExceptions": [
+        "with at least 30 days advance notice",
+        "will notify you in advance of any price changes"
+      ],
+      "disputeTemplate": "Reserving the right to unilaterally raise recurring subscription rates without advance notice and an opportunity to cancel violates 16 CFR § 425.5 and state unfair business practice prohibitions."
+    },
+    {
+      "id": "FTC-TRIAL-05",
+      "category": "TrialConversion",
+      "trapName": "Deceptive Free-Trial-to-Paid Conversion Trap",
+      "severity": "Unlawful",
+      "statutoryCitation": "16 CFR § 425.3(a)(3) & ROSCA 15 U.S.C. § 8403",
+      "statuteSummary": "Free-to-pay conversion offers must disclose the exact date charges will begin, the specific recurring cost, and the deadline to cancel to avoid charges before payment details are taken.",
+      "triggerPatterns": [
+        "(?:free\\s+trial|promotional\\s+period|introductory\\s+offer).*will\\s+(?:automatically\\s+)?convert\\s+(?:in)?to\\s+(?:a\\s+)?(?:paid|full-price|regular|recurring)\\s+subscription",
+        "unless\\s+cancelled\\s+prior\\s+to\\s+the\\s+end\\s+of\\s+the\\s+(?:free\\s+)?trial,?\\s*(?:you\\s+will\\s+be\\s+charged|your\\s+card\\s+will\\s+be\\s+billed)",
+        "free\\s+trial.*automatically\\s+charge.*billing\\s+information"
+      ],
+      "negativeExceptions": [
+        "we will remind you before your trial ends",
+        "reminder email sent prior to trial expiration"
+      ],
+      "disputeTemplate": "Under 16 CFR § 425.3(a)(3), promotional trials that roll into paid recurring billing must disclose cancellation deadlines with explicit pre-charge reminder notifications."
+    }
+  ]
+}

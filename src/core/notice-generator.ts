@@ -3,6 +3,8 @@ import { GeneratedNotice, NoticePayload, NoticeType } from '../contracts/notice'
 /**
  * Generates formal statutory consumer protection notices and dispute documents.
  */
+const SELF_ADVOCACY_FOOTER = `\n\n---\n[NOTICE: Document prepared by consumer using open-source self-advocacy software (BillOfRightsBot) for administrative dispute and regulatory filing purposes.]`;
+
 export function generateStatutoryNotice(
   type: NoticeType,
   payload: NoticePayload
@@ -52,8 +54,7 @@ Sincerely,
 
 ${subscriber}
 Account Identifier: ${accountId}
-Date of Delivery: ${dateStr}
-`,
+Date of Delivery: ${dateStr}${SELF_ADVOCACY_FOOTER}`,
       };
     }
 
@@ -91,8 +92,7 @@ ${clausesCitedText}
 The respondent made enrollment effortless via online checkout, yet systematically obstructed cancellation by demanding telephonic interaction or administrative hurdles, in direct contravention of the FTC Negative Option Rule.
 
 5. RELIEF REQUESTED:
-I request that the FTC and State Attorney General initiate regulatory inquiry into ${vendor}'s negative option billing practices, mandate compliance with 16 CFR Part 425, and order full restitution of all unauthorized renewal fees.
-`,
+I request that the FTC and State Attorney General initiate regulatory inquiry into ${vendor}'s negative option billing practices, mandate compliance with 16 CFR Part 425, and order full restitution of all unauthorized renewal fees.${SELF_ADVOCACY_FOOTER}`,
       };
     }
 
@@ -131,8 +131,7 @@ Failure to issue immediate refund will result in an immediate formal fraud charg
 Sincerely,
 
 ${subscriber}
-Account: ${accountId}
-`,
+Account: ${accountId}${SELF_ADVOCACY_FOOTER}`,
       };
     }
   }

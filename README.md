@@ -61,6 +61,14 @@ Open **`http://localhost:5173`** in your browser.
 
 ---
 
+## 📺 Interactive Walkthrough (Zero Clicks)
+
+![BillOfRightsBot Automated Walkthrough](demo.gif)
+
+> Full high-definition recording available at [`demo.mp4`](demo.mp4).
+
+---
+
 ## Statute Coverage (MVP Scope)
 
 Every single rule in BillOfRightsBot is grounded in official, verified statutes:
@@ -110,6 +118,22 @@ npm test
 # Build production bundle
 npm run build
 ```
+
+### Automated Demo Recording (MP4 & GIF)
+
+Regenerate the automated video demo and animated preview at any time:
+
+```bash
+./scripts/record-demo.sh
+```
+
+Or run via Node:
+
+```bash
+node scripts/record-demo.js
+```
+
+This launches a headless browser, executes the end-to-end interactive workflow (sample loading, clause analysis, scorecard filtering, statutory notice drafting, and data burning), and encodes web-standard [`demo.mp4`](demo.mp4) (H.264) and animated [`demo.gif`](demo.gif) via FFmpeg.
 
 ---
 

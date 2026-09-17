@@ -58,6 +58,44 @@ export function evaluateAgreement(
   };
 }
 
+interface CompiledRuleCache {
+  triggerRegexes: RegExp[];
+  exceptionRegexes: RegExp[];
+}
+
+const COMPILED_RULES_CACHE = new Map<string, CompiledRuleCache>();
+
+function getCompiledRule(rule: StatuteRule): CompiledRuleCache {
+  let cached = COMPILED_RULES_CACHE.get(rule.id);
+  if (!cached) {
+    const triggerRegexes = rule.triggerPatterns
+      .map((p) => {
+        try {
+          return new RegExp(p, 'i');
+        } catch (err) {
+          console.error(`Invalid trigger regex in rule ${rule.id}:`, p, err);
+          return null;
+        }
+      })
+      .filter((r): r is RegExp => r !== null);
+
+    const exceptionRegexes = (rule.negativeExceptions || [])
+      .map((p) => {
+        try {
+          return new RegExp(p, 'i');
+        } catch (err) {
+          console.error(`Invalid exception regex in rule ${rule.id}:`, p, err);
+          return null;
+        }
+      })
+      .filter((r): r is RegExp => r !== null);
+
+    cached = { triggerRegexes, exceptionRegexes };
+    COMPILED_RULES_CACHE.set(rule.id, cached);
+  }
+  return cached;
+}
+
 /**
  * Evaluates a single clause against the active statutory rules.
  */
@@ -74,38 +112,24 @@ export function evaluateSingleClause(
   } | null = null;
 
   for (const rule of rules) {
-    // 1. Check negative exceptions first
-    if (rule.negativeExceptions && rule.negativeExceptions.length > 0) {
-      const hasException = rule.negativeExceptions.some(pattern => {
-        try {
-          const regex = new RegExp(pattern, 'i');
-          return regex.test(fullText);
-        } catch {
-          return false;
-        }
-      });
+    const compiled = getCompiledRule(rule);
 
-      if (hasException) {
-        continue; // Skip this rule; exception satisfied
-      }
+    // 1. Check negative exceptions first
+    if (compiled.exceptionRegexes.some((regex) => regex.test(fullText))) {
+      continue; // Skip this rule; exception satisfied
     }
 
     // 2. Check trigger patterns
-    for (const pattern of rule.triggerPatterns) {
-      try {
-        const regex = new RegExp(pattern, 'i');
-        const match = regex.exec(fullText);
+    for (const regex of compiled.triggerRegexes) {
+      const match = regex.exec(fullText);
 
-        if (match) {
-          const matchedSnippet = extractSentenceAroundMatch(fullText, match.index, match[0].length);
+      if (match) {
+        const matchedSnippet = extractSentenceAroundMatch(fullText, match.index, match[0].length);
 
-          if (!bestMatch || severityRank(rule.severity) > severityRank(bestMatch.rule.severity)) {
-            bestMatch = { rule, snippet: matchedSnippet };
-          }
-          break; // Rule matched; move to next candidate or break
+        if (!bestMatch || severityRank(rule.severity) > severityRank(bestMatch.rule.severity)) {
+          bestMatch = { rule, snippet: matchedSnippet };
         }
-      } catch (err) {
-        console.error(`Invalid regex pattern in rule ${rule.id}:`, pattern, err);
+        break; // Rule matched; move to next candidate or break
       }
     }
   }

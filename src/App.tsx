@@ -12,6 +12,7 @@ import { AuditReport } from './contracts/audit';
 import { segmentClauses } from './core/segmenter';
 import { evaluateAgreement } from './core/rule-engine';
 import { probeLocalSidecar } from './core/sidecar-client';
+import { terminateOcrWorker } from './core/ocr-engine';
 
 import gymSample from '../data/samples/gym-membership.txt?raw';
 import streamingSample from '../data/samples/streaming-service.txt?raw';
@@ -86,6 +87,7 @@ export const App: React.FC = () => {
   };
 
   const handleBurnData = () => {
+    terminateOcrWorker();
     setTermsText('');
     setAuditReport(null);
     setInspectedStatute(null);

@@ -55,9 +55,9 @@ Terms of Service and subscription agreements vary widely in format: pasted text 
 
 ### 2.1 Supported Ingestion Formats
 - **Direct Paste / Plain Text:** Normalized UTF-8 text delivered via client-side input.
+- **Physical Contract Photos & Images (`.png`, `.jpg`, `.jpeg`, `.webp`, `.bmp`):** 100% in-browser WebAssembly OCR (Tesseract.js LSTM neural engine) running in a local Web Worker thread. All worker scripts, core wasm binaries, and trained language models are vendored locally under `/public/ocr/`, ensuring complete air-gap compliance with zero remote CDN calls.
 - **HTML Terms of Service:** In-process DOM/HTML parser strips scripts, ads, and navigational noise while retaining semantic headings (`<h1>`-`<h6>`), lists (`<ol>`, `<ul>`), and emphasis elements (`<strong>`, `<b>`, uppercase headers).
-- **PDF Documents (`.pdf`):** In-browser local extraction (e.g. via local PDF.js runtime or local parser) extracting sequential text runs and font weight indicators for heading detection, with zero server uploads.
-- **Word / Rich Text (`.docx`, `.rtf`, `.md`):** Local client-side unzip/text parser extracting paragraphs and heading styles.
+- **Word / Plain / Rich Text (`.docx`, `.rtf`, `.md`, `.txt`):** Local client-side parser extracting paragraphs and heading styles.
 
 ### 2.2 Ingestion Normalization Rules
 1. **Whitespace & Control Standardization:** Normalizes smart quotes, non-breaking spaces (`\u00A0`), em-dashes, and multiple whitespace sequences.

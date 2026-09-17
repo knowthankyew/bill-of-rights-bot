@@ -24,7 +24,7 @@ The Federal Trade Commission's **Click-to-Cancel Rule** (16 CFR Part 425) and st
 
 ## Core Flow
 
-1. **Ingest:** Paste agreement text or drop a file (`.txt`, `.md`, `.html`, `.rtf`).
+1. **Ingest:** Paste agreement text, drop an agreement file (`.txt`, `.md`, `.html`), or **drop/snap a contract photo** (`.png`, `.jpg`, `.webp`) for **100% in-browser offline OCR**.
 2. **Local Normalization:** In-process text parsing and boundary sanitization with zero external cloud calls and zero telemetry.
 3. **Clause Segmentation:** Heuristic boundary detection extracts discrete agreement clauses.
 4. **Statute Evaluation:** Evaluates clauses against codified statutory rules (Federal FTC + 5 core states):

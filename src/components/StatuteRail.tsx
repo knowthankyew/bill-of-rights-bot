@@ -35,10 +35,15 @@ export const StatuteRail: React.FC<StatuteRailProps> = ({
             {ftcDataset.rules.length} Rules
           </span>
         </div>
-        <div className="statute-title">FTC Negative Option Rule</div>
-        <div className="statute-codification">16 CFR Part 425 & ROSCA</div>
+        <div className="statute-title">{ftcDataset.statuteTitle}</div>
+        <div className="statute-codification">{ftcDataset.codification}</div>
+        {ftcDataset.regulatoryStatus && (
+          <div style={{ marginTop: '0.4rem', padding: '0.25rem 0.5rem', background: 'rgba(234, 179, 8, 0.1)', border: '1px solid rgba(234, 179, 8, 0.3)', borderRadius: '4px', fontSize: '0.7rem', color: '#facc15' }}>
+            ⚠️ 16 CFR Part 425 Vacated — Enforced via ROSCA & FTC Act §5
+          </div>
+        )}
         <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.4rem' }}>
-          Mandatory Click-to-Cancel symmetric cancellation, express consent, and prohibition of unprompted saves.
+          Symmetric cancellation, express consent, and prohibition of deceptive renewal under federal statute.
         </p>
       </div>
 

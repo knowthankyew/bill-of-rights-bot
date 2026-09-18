@@ -5,7 +5,7 @@ import { CandidateClause } from '../../src/contracts/clause';
 describe('rule-engine', () => {
   const ftcRules = STATUTE_CATALOG.FTC.rules;
 
-  it('flags phone-only cancellation as Unlawful under FTC Click-to-Cancel', () => {
+  it('flags phone-only cancellation as Unlawful under ROSCA and FTC Act § 5', () => {
     const clause: CandidateClause = {
       id: 'c1',
       clauseNumber: 1,
@@ -18,7 +18,7 @@ describe('rule-engine', () => {
     const evaluated = evaluateSingleClause(clause, ftcRules);
     expect(evaluated.severity).toBe('Unlawful');
     expect(evaluated.category).toBe('AsymmetricCancellation');
-    expect(evaluated.statutoryCitation).toContain('16 CFR § 425.6');
+    expect(evaluated.statutoryCitation).toContain('ROSCA, 15 U.S.C. § 8403(3)');
     expect(evaluated.matchedSnippet).toBeDefined();
   });
 
@@ -37,7 +37,7 @@ describe('rule-engine', () => {
     expect(evaluated.matchedRuleId).toBeUndefined();
   });
 
-  it('flags mandatory exit interviews and retention mazes', () => {
+  it('flags mandatory exit interviews and retention mazes as Watch under FTC Act § 5 / ROSCA', () => {
     const clause: CandidateClause = {
       id: 'c3',
       clauseNumber: 3,
@@ -48,9 +48,9 @@ describe('rule-engine', () => {
     };
 
     const evaluated = evaluateSingleClause(clause, ftcRules);
-    expect(evaluated.severity).toBe('Unlawful');
+    expect(evaluated.severity).toBe('Watch');
     expect(evaluated.category).toBe('RetentionMaze');
-    expect(evaluated.statutoryCitation).toContain('16 CFR § 425.6(b)');
+    expect(evaluated.statutoryCitation).toContain('FTC Act § 5(a)');
   });
 
   it('flags unilateral price escalation without notice as Watch', () => {

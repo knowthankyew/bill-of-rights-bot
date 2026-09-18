@@ -18,10 +18,22 @@ export interface StatuteRule {
   trapName: string;
   severity: TrapSeverity;
   statutoryCitation: string;
+  vacatedRuleReference?: string;
   statuteSummary: string;
   triggerPatterns: string[];
   negativeExceptions?: string[];
   disputeTemplate: string;
+}
+
+export interface RegulatoryStatus {
+  vacatedRule?: {
+    name: string;
+    citation: string;
+    status: string;
+    details: string;
+    implication: string;
+  };
+  currentlyBindingAuthority?: string[];
 }
 
 export interface StatuteDataset {
@@ -32,5 +44,6 @@ export interface StatuteDataset {
   codification: string;
   lastAudited: string;
   officialSourceUrl: string;
+  regulatoryStatus?: RegulatoryStatus;
   rules: StatuteRule[];
 }

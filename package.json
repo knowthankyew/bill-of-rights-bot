@@ -12,6 +12,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@knowthankyew/privacy-telemetry": "file:../privacy-telemetry/packages/privacy-telemetry",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tesseract.js": "^7.0.0"

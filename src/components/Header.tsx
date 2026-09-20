@@ -1,10 +1,12 @@
 import React from 'react';
 import { JurisdictionCode } from '../contracts/statute';
+import { telemetry } from '../core/telemetry';
 
 interface HeaderProps {
   selectedJurisdiction: JurisdictionCode;
   onJurisdictionChange: (code: JurisdictionCode) => void;
   onBurnData: () => void;
+  onOpenPrivacyAudit: () => void;
   sidecarActive: boolean;
 }
 
@@ -12,23 +14,48 @@ export const Header: React.FC<HeaderProps> = ({
   selectedJurisdiction,
   onJurisdictionChange,
   onBurnData,
+  onOpenPrivacyAudit,
   sidecarActive,
 }) => {
+  const claims = telemetry.getPrivacyClaims();
+
   return (
     <header className="app-header" role="banner">
       <div className="brand-section">
         <span className="brand-logo" aria-hidden="true">⚖️</span>
         <div className="brand-title-wrap">
-          <h1>BillOfRightsBot</h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <h1>BillOfRightsBot</h1>
+            {claims.isEnterpriseBuild && (
+              <span className="enterprise-badge" style={{ fontSize: '0.65rem', padding: '2px 6px', borderRadius: '4px', background: 'rgba(245, 158, 11, 0.15)', color: '#f59e0b', border: '1px solid rgba(245, 158, 11, 0.4)', fontWeight: 600 }}>
+                ENTERPRISE (OTLP)
+              </span>
+            )}
+          </div>
           <p className="brand-subtitle">FTC "Click-to-Cancel" & State ARL Subscription Auditor</p>
         </div>
       </div>
 
       <div className="header-actions">
-        <div className="air-gap-badge" title="Zero outbound network requests. All evaluation executes in local browser memory.">
-          <span className="air-gap-dot" aria-hidden="true"></span>
-          <span>100% Local-First</span>
-        </div>
+        <button
+          type="button"
+          className="air-gap-badge"
+          onClick={onOpenPrivacyAudit}
+          style={{
+            background: 'transparent',
+            cursor: 'pointer',
+            borderColor: claims.isLocalOnlyHonest ? 'rgba(16, 185, 129, 0.3)' : 'rgba(245, 158, 11, 0.4)',
+            color: claims.isLocalOnlyHonest ? 'var(--emerald-text)' : '#f59e0b',
+          }}
+          title="Inspect real-time telemetry mode, egress policy, and session audit trails"
+        >
+          <span
+            className="air-gap-dot"
+            style={claims.isLocalOnlyHonest ? {} : { background: '#f59e0b', boxShadow: '0 0 6px #f59e0b' }}
+            aria-hidden="true"
+          />
+          <span>{claims.badgeLabel}</span>
+        </button>
 
         {sidecarActive && (
           <div className="air-gap-badge" style={{ borderColor: 'rgba(56, 189, 248, 0.4)', color: '#7dd3fc', background: 'rgba(56, 189, 248, 0.1)' }} title="Local sidecar active at localhost:8000">

@@ -6,6 +6,7 @@ import { AgreementWorkspace } from './components/AgreementWorkspace';
 import { Scorecard } from './components/Scorecard';
 import { ClauseCardGrid } from './components/ClauseCardGrid';
 import { RemedyStudio } from './components/RemedyStudio';
+import { PrivacyAuditModal } from './components/PrivacyAuditModal';
 
 import { JurisdictionCode, StatuteDataset } from './contracts/statute';
 import { AuditReport } from './contracts/audit';
@@ -13,6 +14,7 @@ import { segmentClauses } from './core/segmenter';
 import { evaluateAgreement } from './core/rule-engine';
 import { probeLocalSidecar } from './core/sidecar-client';
 import { terminateOcrWorker } from './core/ocr-engine';
+import { telemetry } from './core/telemetry';
 
 import gymSample from '../data/samples/gym-membership.txt?raw';
 import streamingSample from '../data/samples/streaming-service.txt?raw';
@@ -26,7 +28,10 @@ export const App: React.FC = () => {
   const [inspectedStatute, setInspectedStatute] = useState<StatuteDataset | null>(null);
   const [sidecarActive, setSidecarActive] = useState<boolean>(false);
   const [isAuditing, setIsAuditing] = useState<boolean>(false);
+  const [isPrivacyAuditOpen, setIsPrivacyAuditOpen] = useState<boolean>(false);
   const [liveAnnouncement, setLiveAnnouncement] = useState<string>('');
+
+  const claims = telemetry.getPrivacyClaims();
 
   // Probe local sidecar on startup (non-blocking, loopback only)
   useEffect(() => {
@@ -45,10 +50,31 @@ export const App: React.FC = () => {
     }
 
     setIsAuditing(true);
+    const span = telemetry.startSpan('evaluate_subscription_agreement', {
+      jurisdiction,
+      char_count: text.length,
+    });
+    telemetry.recordAuditEvent('document_ingested', `Ingested agreement text (${text.length} chars)`, {
+      jurisdiction,
+      char_count: text.length,
+    });
+
     const candidateClauses = segmentClauses(text);
     const report = evaluateAgreement(candidateClauses, jurisdiction);
     setAuditReport(report);
     setIsAuditing(false);
+
+    telemetry.recordAuditEvent('rules_evaluated', `Evaluated ${report.clauses.length} clauses against ${jurisdiction} statutes`, {
+      total_clauses: report.clauses.length,
+      unlawful_count: report.summary.unlawfulCount,
+      watch_count: report.summary.watchCount,
+    });
+
+    span.end('OK', {
+      total_clauses: report.clauses.length,
+      unlawful_count: report.summary.unlawfulCount,
+      watch_count: report.summary.watchCount,
+    });
 
     setLiveAnnouncement(
       `Audit completed. Evaluated ${report.clauses.length} clauses. Identified ${report.summary.unlawfulCount} unlawful traps and ${report.summary.watchCount} watch clauses.`
@@ -67,6 +93,7 @@ export const App: React.FC = () => {
   };
 
   const handleLoadSample = (sampleKey: 'gym' | 'streaming' | 'saas' | 'compliant') => {
+    telemetry.restartSession();
     let sample = '';
     switch (sampleKey) {
       case 'gym':
@@ -87,6 +114,7 @@ export const App: React.FC = () => {
   };
 
   const handleBurnData = () => {
+    telemetry.burn();
     terminateOcrWorker();
     setTermsText('');
     setAuditReport(null);
@@ -101,12 +129,35 @@ export const App: React.FC = () => {
         {liveAnnouncement}
       </div>
 
+      {claims.isEnterpriseBuild && (
+        <div className="enterprise-persistent-banner" role="alert" style={{ background: '#fef3c7', borderBottom: '2px solid #f59e0b', color: '#92400e', padding: '0.5rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.85rem', fontWeight: 500, zIndex: 1000 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ fontSize: '1.1rem' }}>⚠️</span>
+            <span>
+              <strong>Enterprise Mode:</strong> Telemetry exporter active ({claims.badgeLabel}). Operational metadata exported to <code style={{ background: 'rgba(0,0,0,0.06)', padding: '2px 4px', borderRadius: '4px' }}>{claims.otlpEndpoint}</code>. Agreement text strictly redacted.
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setIsPrivacyAuditOpen(true)}
+            style={{ padding: '0.25rem 0.65rem', fontSize: '0.75rem', fontWeight: 600, background: '#fde68a', color: '#78350f', border: '1px solid #f59e0b', borderRadius: '4px', cursor: 'pointer' }}
+          >
+            Inspect Telemetry
+          </button>
+        </div>
+      )}
+
       <Header
         selectedJurisdiction={selectedJurisdiction}
         onJurisdictionChange={handleJurisdictionChange}
         onBurnData={handleBurnData}
+        onOpenPrivacyAudit={() => setIsPrivacyAuditOpen(true)}
         sidecarActive={sidecarActive}
       />
+
+      <div className="disclaimer-banner" role="note" style={{ background: 'rgba(255, 255, 255, 0.02)', borderBottom: '1px solid var(--border-subtle)', padding: '0.45rem 1.5rem', fontSize: '0.75rem', color: 'var(--text-muted)', textAlign: 'center' }}>
+        <strong>Notice:</strong> BillOfRightsBot is an educational reality engine, not a law firm. {claims.disclaimerExecutionText}
+      </div>
 
       <main className="studio-layout">
         {/* Left Rail: Statutes */}
@@ -154,6 +205,23 @@ export const App: React.FC = () => {
         statute={inspectedStatute}
         onClose={() => setInspectedStatute(null)}
       />
+
+      {/* Privacy & Telemetry Verification Modal */}
+      <PrivacyAuditModal
+        isOpen={isPrivacyAuditOpen}
+        onClose={() => setIsPrivacyAuditOpen(false)}
+        onBurnData={handleBurnData}
+      />
+
+      {/* Footer with honest claims */}
+      <footer style={{ borderTop: '1px solid var(--border-subtle)', background: 'var(--bg-header)', padding: '1rem 1.5rem', textAlign: 'center', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+        <p style={{ margin: '0 0 4px', color: 'var(--text-secondary)' }}>
+          <strong>BillOfRightsBot{claims.appTitleSuffix}</strong> — {claims.footerTitle}
+        </p>
+        <p style={{ margin: 0 }}>
+          {claims.footerSubtext}
+        </p>
+      </footer>
     </div>
   );
 };

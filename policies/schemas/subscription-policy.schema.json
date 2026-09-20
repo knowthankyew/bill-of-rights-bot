@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://knowthankyew.org/schemas/v1/subscription-policy.schema.json",
+  "title": "SubscriptionPolicyPack",
+  "description": "Declarative policy schema for subscription agreements, FTC Click-to-Cancel rules, and state automatic renewal laws (ARL)",
+  "type": "object",
+  "required": [
+    "jurisdictionCode",
+    "jurisdictionName",
+    "statuteTitle",
+    "codification",
+    "lastAudited",
+    "officialSourceUrl",
+    "rules"
+  ],
+  "properties": {
+    "jurisdictionCode": { "type": "string", "enum": ["FTC", "CA", "NY", "IL", "CO", "DE"] },
+    "jurisdictionName": { "type": "string" },
+    "statuteTitle": { "type": "string" },
+    "codification": { "type": "string" },
+    "lastAudited": { "type": "string" },
+    "officialSourceUrl": { "type": "string" },
+    "regulatoryStatus": { "type": "object" },
+    "rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "category",
+          "trapName",
+          "severity",
+          "statutoryCitation",
+          "statuteSummary",
+          "triggerPatterns",
+          "disputeTemplate"
+        ],
+        "properties": {
+          "id": { "type": "string" },
+          "category": {
+            "type": "string",
+            "enum": [
+              "AsymmetricCancellation",
+              "RetentionMaze",
+              "InconspicuousRenewal",
+              "PreRenewalNotice",
+              "UnilateralPriceHike",
+              "TrialConversion",
+              "UnconditionalGift",
+              "AffirmativeConsent"
+            ]
+          },
+          "trapName": { "type": "string" },
+          "severity": { "type": "string", "enum": ["Unlawful", "Watch", "Standard"] },
+          "statutoryCitation": { "type": "string" },
+          "vacatedRuleReference": { "type": "string" },
+          "statuteSummary": { "type": "string" },
+          "triggerPatterns": { "type": "array", "items": { "type": "string" } },
+          "negativeExceptions": { "type": "array", "items": { "type": "string" } },
+          "disputeTemplate": { "type": "string" }
+        }
+      }
+    }
+  }
+}

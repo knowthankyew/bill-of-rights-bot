@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "jurisdictionCode": "CO",
+  "jurisdictionName": "Colorado",
+  "statuteTitle": "Colorado Automatic Renewal Contracts Act",
+  "codification": "Colo. Rev. Stat. § 6-1-732",
+  "lastAudited": "2026-09-01",
+  "officialSourceUrl": "https://leg.colorado.gov/bills/hb21-1239",
+  "rules": [
+    {
+      "id": "CO-ARCA-01",
+      "category": "AsymmetricCancellation",
+      "trapName": "Colorado Simple Online Cancellation Mandate",
+      "severity": "Unlawful",
+      "statutoryCitation": "Colo. Rev. Stat. § 6-1-732(2)(b)",
+      "statuteSummary": "Requires businesses to provide a simple, cost-effective, timely, and easy-to-use mechanism for cancellation. If entered into online, the business must provide a direct online cancellation mechanism, including a link or button on the website, within a customer portal, or an immediate pre-formatted email.",
+      "triggerPatterns": [
+        "(?:must|required to)\\s+call\\s+(?:customer\\s+service|representative|phone)",
+        "cancel(?:lation)?\\s+(?:accepted\\s+only|submitted\\s+only)\\s+by\\s+(?:mail|phone)"
+      ],
+      "negativeExceptions": [
+        "direct cancellation link or button",
+        "cancel online in your portal"
+      ],
+      "disputeTemplate": "Under Colo. Rev. Stat. § 6-1-732(2)(b), Colorado law mandates a direct online cancellation mechanism (such as a link or button) for online subscribers. Conditioning cancellation on phone calls is unlawful."
+    },
+    {
+      "id": "CO-ARCA-02",
+      "category": "PreRenewalNotice",
+      "trapName": "Failure to Provide 25-to-40 Day Written Reminder",
+      "severity": "Unlawful",
+      "statutoryCitation": "Colo. Rev. Stat. § 6-1-732(2)(a)",
+      "statuteSummary": "For automatic renewal contracts with a term of one year or longer, the business must provide written notice 25 to 40 days before each renewal date detailing that the contract will renew unless cancelled, and instructions on how to cancel.",
+      "triggerPatterns": [
+        "auto-?renews?\\s+annually\\s+unless\\s+cancelled",
+        "renewed\\s+for\\s+an\\s+additional\\s+year\\s+without\\s+(?:written\\s+)?notice"
+      ],
+      "negativeExceptions": [
+        "notice 25 to 40 days prior",
+        "written notice will be sent 25 days before"
+      ],
+      "disputeTemplate": "Colo. Rev. Stat. § 6-1-732(2)(a) requires annual auto-renewal agreements to dispatch written reminders 25 to 40 days in advance. Failure to do so constitutes an deceptive trade practice."
+    }
+  ]
+}

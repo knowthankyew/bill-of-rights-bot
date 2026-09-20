@@ -1,0 +1,83 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "jurisdictionCode": "CA",
+  "jurisdictionName": "California",
+  "statuteTitle": "California Automatic Renewal Law (ARL)",
+  "codification": "Cal. Bus. & Prof. Code §§ 17600–17606 (AB 390 / AB 2863)",
+  "lastAudited": "2026-09-01",
+  "officialSourceUrl": "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=BPC&sectionNum=17602",
+  "rules": [
+    {
+      "id": "CA-ARL-01",
+      "category": "AsymmetricCancellation",
+      "trapName": "Mandatory Immediate Online Cancellation Violation",
+      "severity": "Unlawful",
+      "statutoryCitation": "Cal. Bus. & Prof. Code § 17602(c)",
+      "statuteSummary": "A consumer who accepts an automatic renewal or continuous service offer online must be allowed to terminate the automatic renewal or continuous service exclusively online at will, without engaging in further steps that obstruct or delay the consumer's ability to terminate immediately (such as a prominent direct button or link, or a pre-formatted termination email).",
+      "triggerPatterns": [
+        "(?:must|required to|only way to)\\s+call\\s+(?:customer\\s+service|support|1-800|phone|representative)\\s+to\\s+cancel",
+        "cancellations?\\s+(?:cannot|not\\s+accepted)\\s+(?:online|through\\s+account|by\\s+email)",
+        "cancel(?:lation)?\\s+(?:only\\s+by|in\\s+person|by\\s+mail|via\\s+certified\\s+mail)"
+      ],
+      "negativeExceptions": [
+        "terminate online at will",
+        "cancel anytime in your account settings",
+        "online cancellation link"
+      ],
+      "disputeTemplate": "Under Cal. Bus. & Prof. Code § 17602(c), California law mandates that consumers who enroll online must be allowed to terminate the subscription exclusively online at will without friction or mandatory phone calls. Your requirement violates California law."
+    },
+    {
+      "id": "CA-ARL-02",
+      "category": "PreRenewalNotice",
+      "trapName": "Lack of Advance Renewal Reminder Notice (AB 390 Mandate)",
+      "severity": "Unlawful",
+      "statutoryCitation": "Cal. Bus. & Prof. Code § 17602(a)(4)",
+      "statuteSummary": "Requires businesses to provide a clear and conspicuous notice to consumers 15 to 45 days before the automatic renewal date for contracts of one year or longer, or 3 to 21 days before the end of a free trial/promotional period exceeding 31 days.",
+      "triggerPatterns": [
+        "auto-?renews?\\s+(?:for\\s+an\\s+additional\\s+year|annually)\\s+without\\s+(?:advance\\s+|further\\s+)?notice",
+        "unless\\s+you\\s+cancel\\s+(?:at\\s+least\\s+)?(?:30|60|90)\\s+days\\s+prior\\s+to\\s+(?:the\\s+)?(?:expiration|renewal)",
+        "written\\s+notice\\s+of\\s+cancellation\\s+(?:at\\s+least|no\\s+later\\s+than)\\s+(?:30|60)\\s+days\\s+before"
+      ],
+      "negativeExceptions": [
+        "we will send you a notice 15 to 45 days prior",
+        "renewal reminder will be sent in advance"
+      ],
+      "disputeTemplate": "Under Cal. Bus. & Prof. Code § 17602(a)(4), businesses with annual auto-renewals must provide clear written reminder notices between 15 and 45 days prior to the renewal date. Imposing strict advance cancellation windows without mandatory statutory reminder notices is unlawful."
+    },
+    {
+      "id": "CA-ARL-03",
+      "category": "UnconditionalGift",
+      "trapName": "Unlawful Renewal / Unconditional Gift Restitution",
+      "severity": "Unlawful",
+      "statutoryCitation": "Cal. Bus. & Prof. Code § 17603",
+      "statuteSummary": "In any case in which a business sends any goods, wares, merchandise, or services to a consumer under a continuous service agreement without first obtaining affirmative consent and complying with statutory disclosure and cancellation mandates, the goods or services shall for all purposes be deemed an unconditional gift to the consumer. The consumer may use or dispose of them without any obligation, and unauthorized charges are subject to complete restitution.",
+      "triggerPatterns": [
+        "non-?refundable\\s+(?:upon|after)\\s+renewal",
+        "no\\s+refunds\\s+(?:for|under)\\s+(?:any\\s+circumstances|partial\\s+terms|auto-renewals)",
+        "all\\s+charges\\s+are\\s+final\\s+and\\s+non-?refundable"
+      ],
+      "negativeExceptions": [
+        "subject to applicable statutory refund rights",
+        "except where prohibited by law"
+      ],
+      "disputeTemplate": "Under Cal. Bus. & Prof. Code § 17603, any services or goods provided under an auto-renewal arrangement that fails to comply with California ARL mandates are deemed an unconditional gift. The consumer bears zero liability and is legally entitled to full restitution of all unauthorized renewal charges."
+    },
+    {
+      "id": "CA-ARL-04",
+      "category": "InconspicuousRenewal",
+      "trapName": "Failure to Present Terms in Visual Proximity",
+      "severity": "Watch",
+      "statutoryCitation": "Cal. Bus. & Prof. Code § 17602(a)(1)",
+      "statuteSummary": "Requires the automatic renewal offer terms to be presented in a clear and conspicuous manner in visual proximity to the request for consent to the offer before the subscription agreement is fulfilled.",
+      "triggerPatterns": [
+        "by\\s+clicking\\s+[\"']?(?:i\\s+agree|continue|submit|sign\\s+up|order)[\"']?\\s+you\\s+agree\\s+to\\s+our\\s+terms\\s+of\\s+service",
+        "terms\\s+of\\s+service\\s+(?:contain|include)\\s+(?:automatic\\s+renewal|recurring\\s+charges)"
+      ],
+      "negativeExceptions": [
+        "separately displayed renewal terms",
+        "stand-alone automatic renewal disclosure"
+      ],
+      "disputeTemplate": "Cal. Bus. & Prof. Code § 17602(a)(1) requires automatic renewal terms to be displayed clearly and conspicuously in direct visual proximity to the consent action, not hidden behind generic terms hyperlinks."
+    }
+  ]
+}

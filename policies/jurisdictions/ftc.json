@@ -1,0 +1,122 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "jurisdictionCode": "FTC",
+  "jurisdictionName": "Federal Trade Commission — ROSCA & FTC Act §5",
+  "statuteTitle": "Restore Online Shoppers' Confidence Act (ROSCA) & FTC Act Section 5",
+  "codification": "15 U.S.C. §§ 8401-8405 (ROSCA); 15 U.S.C. § 45(a) (FTC Act §5)",
+  "lastAudited": "2026-09-17",
+  "officialSourceUrl": "https://www.ftc.gov/legal-library/browse/statutes/restore-online-shoppers-confidence-act",
+  "regulatoryStatus": {
+    "vacatedRule": {
+      "name": "FTC 'Click-to-Cancel' Negative Option Rule",
+      "citation": "16 CFR Part 425 (2024 amendments)",
+      "status": "VACATED IN FULL — not currently binding law",
+      "details": "On July 8, 2025, the U.S. Court of Appeals for the Eighth Circuit vacated the FTC's 2024 Click-to-Cancel Rule in its entirety on procedural grounds (Custom Communications, Inc. v. FTC, No. 24-3137), days before its compliance deadline. The FTC opened a new rulemaking process (Advance Notice of Proposed Rulemaking, comments closed April 13, 2026) that may eventually revive similar requirements, but as of this audit date no replacement rule has been finalized or taken effect.",
+      "implication": "Do not cite 16 CFR Part 425 as currently binding federal law. The consumer-protection substance the vacated rule targeted (asymmetric cancellation, retention gauntlets, buried renewal terms) remains independently actionable under ROSCA and FTC Act §5, which were never affected by the vacatur, and under applicable state auto-renewal statutes (see /data/statutes/{state}.json for CA, NY, CO, DE, IL)."
+    },
+    "currentlyBindingAuthority": [
+      "ROSCA, 15 U.S.C. § 8403 — requires (1) clear and conspicuous disclosure of all material terms before collecting billing information, (2) express informed consent before charging, and (3) a simple mechanism to stop recurring charges, for any negative-option feature sold online.",
+      "FTC Act § 5(a), 15 U.S.C. § 45(a) — prohibits unfair or deceptive acts or practices in commerce; the FTC has continued using this alongside ROSCA to bring enforcement actions (e.g., FTC v. Amazon; FTC v. Uber/UberOne, 2026) against exactly the cancellation-friction patterns the vacated rule targeted.",
+      "State automatic-renewal statutes remain independently in force and are frequently stricter than federal law — check jurisdiction-specific files."
+    ]
+  },
+  "rules": [
+    {
+      "id": "FTC-CTC-01",
+      "category": "AsymmetricCancellation",
+      "trapName": "Asymmetric Cancellation ('Click-to-Cancel' Pattern)",
+      "severity": "Unlawful",
+      "statutoryCitation": "ROSCA, 15 U.S.C. § 8403(3); FTC Act § 5(a), 15 U.S.C. § 45(a)",
+      "vacatedRuleReference": "Formerly also enforced via 16 CFR § 425.6(a), vacated by the Eighth Circuit July 8, 2025 — see regulatoryStatus above. Not cited as independently binding.",
+      "statuteSummary": "ROSCA requires sellers to provide a simple mechanism for consumers to stop recurring charges on any negative-option feature sold online. The FTC has continued to treat cancellation flows that are harder than the enrollment flow (mandatory phone calls, in-person visits, or postal mail to cancel an online-only signup) as both a ROSCA violation and an unfair practice under FTC Act § 5, independent of the now-vacated Click-to-Cancel rule.",
+      "triggerPatterns": [
+        "(?:must|required to|only way to|can only)\\s+cancel\\s+(?:by|via|through)?\\s*(?:calling|phone|calling us|telephoning|speaking to|contacting customer support by phone)",
+        "call\\s+(?:1-800|1-888|1-877|1-866|1-855|\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4})\\s+to\\s+cancel",
+        "cancellations?\\s+(?:are\\s+not|cannot\\s+be)\\s+(?:accepted|processed|handled)\\s+(?:online|via email|by email|through the website|through your account)",
+        "cancel(?:lation)?\\s+(?:must be submitted|accepted only)\\s+(?:in writing|by certified mail|by postal mail|via certified letter|in person)"
+      ],
+      "negativeExceptions": [
+        "or\\s+(?:you may\\s+)?cancel\\s+online",
+        "cancel(?:led)?\\s+(?:at any time\\s+)?(?:via|through|in)\\s+(?:your\\s+)?(?:account|settings|portal|dashboard)",
+        "click(?:ing)?\\s+(?:on\\s+)?(?:the\\s+)?[\"']?cancel(?:\\s+subscription)?[\"']?\\s+button"
+      ],
+      "disputeTemplate": "Under ROSCA, 15 U.S.C. § 8403(3), sellers must provide a simple mechanism to stop recurring charges on any online negative-option feature; requiring a phone call, in-person visit, or postal mail to cancel an enrollment that was completed online is inconsistent with this requirement and, independently, may constitute an unfair practice under FTC Act § 5(a). I request that cancellation be made available through the same online channel used to enroll."
+    },
+    {
+      "id": "FTC-SAVE-02",
+      "category": "RetentionMaze",
+      "trapName": "Retention Gauntlet / Unsolicited 'Saves' Pitch",
+      "severity": "Watch",
+      "statutoryCitation": "FTC Act § 5(a), 15 U.S.C. § 45(a); ROSCA, 15 U.S.C. § 8403(3)",
+      "vacatedRuleReference": "Formerly also enforced via 16 CFR § 425.6(b), vacated by the Eighth Circuit July 8, 2025 — see regulatoryStatus above. Not cited as independently binding.",
+      "statuteSummary": "The FTC has argued that mandatory retention interviews, forced 'save' pitches, or multi-step approval gauntlets imposed on a consumer attempting to cancel can themselves defeat ROSCA's 'simple mechanism' requirement and separately constitute an unfair practice under FTC Act § 5, even without the vacated rule's explicit consent-based carve-out. This is a developing enforcement theory rather than a settled bright-line rule, so it is flagged as Watch rather than Unlawful pending a clearer legal record.",
+      "triggerPatterns": [
+        "(?:prior to|before|in order to)\\s+cancel(?:ling)?,?\\s*(?:you must|required to)\\s*(?:speak with|chat with|contact)\\s*(?:a|our)\\s*(?:specialist|retention|representative|agent|account manager)",
+        "(?:must|required to)\\s*(?:complete|finish|submit)\\s*(?:a|an)\\s*(?:exit\\s+interview|cancellation\\s+survey|feedback\\s+session)\\s*(?:before|prior to|to complete)\\s*cancellation",
+        "cancellation\\s+(?:requires|subject to)\\s+(?:manager\\s+approval|retention\\s+review|consultation)"
+      ],
+      "negativeExceptions": [
+        "optional survey",
+        "if you wish to provide feedback"
+      ],
+      "disputeTemplate": "Requiring a mandatory retention interview, agent consultation, or manager approval before cancellation can be completed raises concerns under ROSCA's simple-mechanism requirement (15 U.S.C. § 8403(3)) and FTC Act § 5(a)'s prohibition on unfair practices. I request that cancellation not be conditioned on completing a retention process."
+    },
+    {
+      "id": "FTC-DISC-03",
+      "category": "InconspicuousRenewal",
+      "trapName": "Inconspicuous / Buried Negative Option Terms",
+      "severity": "Unlawful",
+      "statutoryCitation": "ROSCA, 15 U.S.C. § 8403(1); FTC Act § 5(a), 15 U.S.C. § 45(a)",
+      "vacatedRuleReference": "Formerly also enforced via 16 CFR § 425.3, vacated by the Eighth Circuit July 8, 2025 — see regulatoryStatus above. Not cited as independently binding.",
+      "statuteSummary": "ROSCA requires clear and conspicuous disclosure of all material terms of a negative-option offer — including that charges will recur, the billing frequency, and the cancellation mechanism — before collecting billing information. Burying these terms in general boilerplate without clear presentation is a live ROSCA and FTC Act § 5 enforcement target independent of the vacated CFR rule.",
+      "triggerPatterns": [
+        "automatically\\s+renews?\\s+(?:at\\s+the\\s+then-current\\s+rate|without\\s+further\\s+notice|indefinitely)\\s+unless\\s+cancelled",
+        "renew(?:s|al)\\s+(?:will\\s+occur|occurs)\\s+automatically\\s+without\\s+(?:prior\\s+)?notice",
+        "recurring\\s+basis\\s+(?:until|unless)\\s+(?:you\\s+)?notify\\s+us"
+      ],
+      "negativeExceptions": [
+        "we will send you a reminder notice",
+        "advance written notice will be provided"
+      ],
+      "disputeTemplate": "Under ROSCA, 15 U.S.C. § 8403(1), all material terms of a recurring-charge offer must be clearly and conspicuously disclosed before billing information is collected. Presenting auto-renewal terms in dense, generalized boilerplate without a clear, standalone disclosure is inconsistent with this requirement and may separately violate FTC Act § 5(a)."
+    },
+    {
+      "id": "FTC-HIKE-04",
+      "category": "UnilateralPriceHike",
+      "trapName": "Unilateral Price Increase Without Re-Consent",
+      "severity": "Watch",
+      "statutoryCitation": "FTC Act § 5(a), 15 U.S.C. § 45(a); ROSCA, 15 U.S.C. § 8403(2)",
+      "vacatedRuleReference": "Formerly also enforced via 16 CFR § 425.5, vacated by the Eighth Circuit July 8, 2025 — see regulatoryStatus above. Not cited as independently binding.",
+      "statuteSummary": "A seller reserving unlimited, no-notice authority to raise a recurring charge sits in legal grey area post-vacatur: ROSCA's express-informed-consent requirement was obtained for the original terms, not necessarily for an unknown future price, and the FTC has treated undisclosed material price changes as potentially deceptive under FTC Act § 5. This is flagged as Watch, not Unlawful, since there is no current bright-line federal rule requiring a specific notice period — check the applicable state file, several of which do set explicit advance-notice requirements for price increases.",
+      "triggerPatterns": [
+        "reserves?\\s+the\\s+right\\s+to\\s+(?:change|increase|modify|alter)\\s+(?:subscription\\s+)?(?:fees|prices|rates)\\s+at\\s+(?:any\\s+time|our\\s+sole\\s+discretion)\\s+without\\s+(?:prior\\s+)?notice",
+        "fees\\s+(?:may|will)\\s+increase\\s+(?:automatically|upon\\s+renewal)\\s+without\\s+(?:advance\\s+)?notice",
+        "prices?\\s+subject\\s+to\\s+change\\s+without\\s+notice"
+      ],
+      "negativeExceptions": [
+        "with at least 30 days advance notice",
+        "will notify you in advance of any price changes"
+      ],
+      "disputeTemplate": "A clause reserving the right to raise recurring subscription rates without advance notice raises concerns under FTC Act § 5(a) and ROSCA's informed-consent requirement (15 U.S.C. § 8403(2)), and may separately violate your state's automatic-renewal notice statute. I request advance written notice and a clear opportunity to cancel before any price increase takes effect."
+    },
+    {
+      "id": "FTC-TRIAL-05",
+      "category": "TrialConversion",
+      "trapName": "Deceptive Free-Trial-to-Paid Conversion Trap",
+      "severity": "Unlawful",
+      "statutoryCitation": "ROSCA, 15 U.S.C. § 8403(1)-(3); FTC Act § 5(a), 15 U.S.C. § 45(a)",
+      "vacatedRuleReference": "Formerly also enforced via 16 CFR § 425.3(a)(3), vacated by the Eighth Circuit July 8, 2025 — see regulatoryStatus above. Not cited as independently binding.",
+      "statuteSummary": "Free-to-paid conversions are squarely within ROSCA's negative-option definition: the seller must clearly disclose the conversion date and recurring cost before collecting billing information, obtain express informed consent to the eventual charge, and provide a simple cancellation mechanism. This combination has been the basis of the FTC's largest ROSCA enforcement actions to date and does not depend on the vacated CFR rule.",
+      "triggerPatterns": [
+        "(?:free\\s+trial|promotional\\s+period|introductory\\s+offer).*will\\s+(?:automatically\\s+)?convert\\s+(?:in)?to\\s+(?:a\\s+)?(?:paid|full-price|regular|recurring)\\s+subscription",
+        "unless\\s+cancelled\\s+prior\\s+to\\s+the\\s+end\\s+of\\s+the\\s+(?:free\\s+)?trial,?\\s*(?:you\\s+will\\s+be\\s+charged|your\\s+card\\s+will\\s+be\\s+billed)",
+        "free\\s+trial.*automatically\\s+charge.*billing\\s+information"
+      ],
+      "negativeExceptions": [
+        "we will remind you before your trial ends",
+        "reminder email sent prior to trial expiration"
+      ],
+      "disputeTemplate": "Under ROSCA, 15 U.S.C. § 8403, a free trial that converts to a paid recurring subscription must clearly disclose the conversion date and cost before billing information is collected, obtain express informed consent to the eventual charge, and provide a simple cancellation mechanism. The absence of a pre-charge reminder and clear disclosure here is inconsistent with these requirements and may independently violate FTC Act § 5(a)."
+    }
+  ]
+}

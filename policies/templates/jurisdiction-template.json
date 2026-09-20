@@ -1,0 +1,24 @@
+{
+  "$schema": "../schemas/subscription-policy.schema.json",
+  "jurisdictionCode": "CA",
+  "jurisdictionName": "State Name",
+  "statuteTitle": "State Automatic Renewal Law",
+  "codification": "State Bus. & Prof. Code § ...",
+  "lastAudited": "2026-09-01",
+  "officialSourceUrl": "https://...",
+  "rules": [
+    {
+      "id": "XX-ARL-01",
+      "category": "AsymmetricCancellation",
+      "trapName": "Phone-Only Cancellation Requirement",
+      "severity": "Unlawful",
+      "statutoryCitation": "State Code § ...",
+      "statuteSummary": "Consumers who subscribe online must be allowed to cancel online without hurdles.",
+      "triggerPatterns": [
+        "must\\s+call\\s+(?:customer\\s+service|support)\\s+to\\s+cancel"
+      ],
+      "negativeExceptions": [],
+      "disputeTemplate": "Under State Code § ..., requiring phone cancellation for online subscriptions is unlawful."
+    }
+  ]
+}

@@ -10,9 +10,21 @@ export interface SidecarStatus {
   version?: string;
 }
 
+export function isSidecarFeatureEnabled(): boolean {
+  try {
+    return Boolean(import.meta.env?.VITE_LOCAL_SIDECAR_ENABLED === 'true');
+  } catch {
+    return false;
+  }
+}
+
 export async function probeLocalSidecar(
   endpoint = 'http://localhost:8000/health'
 ): Promise<SidecarStatus> {
+  if (!isSidecarFeatureEnabled()) {
+    return { isAvailable: false };
+  }
+
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 250);
 

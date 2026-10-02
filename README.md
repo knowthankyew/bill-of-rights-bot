@@ -7,6 +7,7 @@
 [![Privacy: 100% Air-Gapped](https://img.shields.io/badge/Privacy-100%25%20Air--Gapped-success.svg)](#privacy--air-gap-guarantee)
 [![A11y: WCAG AA Compliant](https://img.shields.io/badge/A11y-WCAG%20AA%20Compliant-brightgreen.svg)](#accessibility-day-1-compliance)
 [![Runtime: TypeScript + Vite](https://img.shields.io/badge/Stack-TypeScript%20%7C%20Vite-purple.svg)](#quickstart-zero-config)
+[![Roadmap: v1.1.0 In-Browser PDF](https://img.shields.io/badge/Roadmap-v1.1.0%20In--Browser%20PDF-blueviolet.svg)](ROADMAP.md)
 
 ---
 

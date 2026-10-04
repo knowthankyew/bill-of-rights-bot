@@ -55,6 +55,7 @@ Terms of Service and subscription agreements vary widely in format: pasted text 
 
 ### 2.1 Supported Ingestion Formats
 - **Direct Paste / Plain Text:** Normalized UTF-8 text delivered via client-side input.
+- **PDF Documents & Agreements (`.pdf`):** 100% in-browser dual-path PDF ingestion using an air-gapped local PDF.js worker (`/public/pdfjs/`). Fast Path extracts vector text streams in milliseconds with paragraph and whitespace reconstruction; Deep Path detects sparse/scanned pages (< 50 chars) and automatically rasterizes them to offscreen canvas (200–300 DPI) for in-browser WebAssembly OCR.
 - **Physical Contract Photos & Images (`.png`, `.jpg`, `.jpeg`, `.webp`, `.bmp`):** 100% in-browser WebAssembly OCR (Tesseract.js LSTM neural engine) running in a local Web Worker thread. All worker scripts, core wasm binaries, and trained language models are vendored locally under `/public/ocr/`, ensuring complete air-gap compliance with zero remote CDN calls.
 - **HTML Terms of Service:** In-process DOM/HTML parser strips scripts, ads, and navigational noise while retaining semantic headings (`<h1>`-`<h6>`), lists (`<ol>`, `<ul>`), and emphasis elements (`<strong>`, `<b>`, uppercase headers).
 - **Word / Plain / Rich Text (`.docx`, `.rtf`, `.md`, `.txt`):** Local client-side parser extracting paragraphs and heading styles.

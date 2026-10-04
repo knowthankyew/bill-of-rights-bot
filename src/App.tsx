@@ -14,6 +14,7 @@ import { segmentClauses } from './core/segmenter';
 import { evaluateAgreement } from './core/rule-engine';
 import { probeLocalSidecar } from './core/sidecar-client';
 import { terminateOcrWorker } from './core/ocr-engine';
+import { purgePdfMemory } from './core/pdf-engine';
 import { telemetry } from './core/telemetry';
 
 import gymSample from '../data/samples/gym-membership.txt?raw';
@@ -116,6 +117,7 @@ export const App: React.FC = () => {
   const handleBurnData = () => {
     telemetry.burn();
     terminateOcrWorker();
+    purgePdfMemory();
     setTermsText('');
     setAuditReport(null);
     setInspectedStatute(null);

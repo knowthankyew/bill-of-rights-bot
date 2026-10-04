@@ -79,10 +79,28 @@ export async function performLocalOcr(
   }
 }
 
+type BurnHook = () => Promise<void> | void;
+const burnHooks: BurnHook[] = [];
+
 /**
- * Terminate and flush the worker on "Burn Local Data".
+ * Register a cleanup callback to be invoked whenever OCR / document memory is purged.
+ */
+export function registerBurnHook(hook: BurnHook): void {
+  burnHooks.push(hook);
+}
+
+/**
+ * Terminate and flush the worker and all registered amnesiac buffers on "Burn Local Data".
  */
 export async function terminateOcrWorker(): Promise<void> {
+  for (const hook of burnHooks) {
+    try {
+      await hook();
+    } catch {
+      // Ignore hook errors during burn
+    }
+  }
+
   if (cachedWorker) {
     try {
       await cachedWorker.terminate();

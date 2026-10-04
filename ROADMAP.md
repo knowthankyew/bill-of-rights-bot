@@ -1,7 +1,7 @@
 # Roadmap: BillOfRightsBot for Subscriptions ⚖️
 
 > **Repository**: [`knowthankyew/bill-of-rights-bot`](https://github.com/knowthankyew/bill-of-rights-bot)  
-> **Status**: **v1.0.0 Foundation Live · v1.1.0 In-Browser PDF Ingestion & Hybrid OCR in Planning**
+> **Status**: **v1.1.0 In-Browser PDF Ingestion & Hybrid OCR Delivered ✅**
 
 ---
 
@@ -59,19 +59,19 @@ flowchart TD
 
 ### Key Technical Specifications for v1.1.0
 
-- [ ] **Dual-Path PDF Pipeline**:
+- [x] **Dual-Path PDF Pipeline**:
   - **Fast Path (Digital/Searchable PDFs)**: In-browser text stream extraction using a vendored, air-gapped `pdfjs-dist` worker. Extracts embedded fonts and text elements in milliseconds without rendering overhead.
   - **Deep Path (Scanned/Flattened PDFs)**: Offscreen `<canvas>` page rasterization feeding directly into the existing vendored WebAssembly OCR worker (`/ocr/worker.min.js`). Handles camera scans, flattened mobile agreements, and signed paper contracts.
   - **Adaptive Auto-Detection**: Heuristic threshold evaluating extracted characters per page. If a page yields `< 50` characters of legible text, seamlessly delegates that page to the neural OCR worker.
-- [ ] **Multi-Page Lifecycle & Memory Safeguards**:
+- [x] **Multi-Page Lifecycle & Memory Safeguards**:
   - **Page-by-Page Progress Reporting**: Interactive progress indicator displaying current page, extraction phase, and percentage (`"Page 2 of 4: Extracting digital text..."` or `"Page 3 of 4: Local OCR recognizing text (62%)..."`).
   - **Safety Page Cap & Pagination**: Enforce a default ceiling of 20 pages per document to prevent browser tab out-of-memory (OOM) faults on massive enterprise filings, with a 1-click `"Analyze Next 10 Pages"` affordance.
   - **Immediate Frame Cleanup**: Explicitly release `PDFDocumentProxy`, page handles, and offscreen canvas buffers as each page finishes to maintain a minimal memory footprint.
-- [ ] **Workspace UX & File Chooser Integration**:
+- [x] **Workspace UX & File Chooser Integration**:
   - Update file input filter to `accept=".pdf,application/pdf,.txt,.md,.html,.htm,.rtf,image/*,.jpg,.jpeg,.png,.webp,.bmp"`.
   - Update upload button copy to: `"Upload Document (.pdf, .txt, .md, .html)"`.
   - Add visual mode chip in the input header indicating ingestion provenance: `[PDF Text Stream]` vs `[PDF Local OCR]`.
-- [ ] **Air-Gap & Amnesiac Conformance**:
+- [x] **Air-Gap & Amnesiac Conformance**:
   - Zero network dispatch: PDF.js worker scripts and fonts vendored strictly within `/public/pdfjs/` or compiled into the client bundle.
   - Nuclear Amnesia hook: `terminateOcrWorker()` and "Burn Local Data" explicitly flush active PDF byte buffers and canvas allocations.
 

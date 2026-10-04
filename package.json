@@ -1,6 +1,6 @@
 {
   "name": "bill-of-rights-bot",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "description": "100% local-first, statute-grounded subscription agreement auditor against FTC Click-to-Cancel and state auto-renewal statutes",
   "type": "module",
@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@knowthankyew/privacy-telemetry": "file:../privacy-telemetry/packages/privacy-telemetry",
+    "pdfjs-dist": "^4.10.38",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tesseract.js": "^7.0.0"

@@ -1,3 +1,16 @@
+// Polyfill Promise.withResolvers for Node.js 20 and older browser environments
+if (typeof (Promise as any).withResolvers !== 'function') {
+  (Promise as any).withResolvers = function <T>() {
+    let resolve!: (value: T | PromiseLike<T>) => void;
+    let reject!: (reason?: any) => void;
+    const promise = new Promise<T>((res, rej) => {
+      resolve = res;
+      reject = rej;
+    });
+    return { promise, resolve, reject };
+  };
+}
+
 import * as pdfjsLib from 'pdfjs-dist';
 import { performLocalOcr, registerBurnHook } from './ocr-engine';
 
@@ -58,10 +71,28 @@ const activeBuffers: Set<ArrayBuffer> = new Set();
 let isCancellationRequested = false;
 
 /**
+ * Ensure Promise.withResolvers is polyfilled across all execution contexts.
+ */
+export function ensurePromiseWithResolvers(): void {
+  if (typeof (Promise as any).withResolvers !== 'function') {
+    (Promise as any).withResolvers = function <T>() {
+      let resolve!: (value: T | PromiseLike<T>) => void;
+      let reject!: (reason?: any) => void;
+      const promise = new Promise<T>((res, rej) => {
+        resolve = res;
+        reject = rej;
+      });
+      return { promise, resolve, reject };
+    };
+  }
+}
+
+/**
  * Configure local worker and resource URLs for 100% air-gapped offline operation.
  * All worker scripts, cmaps, and standard fonts are loaded from local /pdfjs/ paths.
  */
 export function setupPdfWorker(): void {
+  ensurePromiseWithResolvers();
   if (typeof window !== 'undefined' && !pdfjsLib.GlobalWorkerOptions.workerSrc) {
     const base = (typeof import.meta !== 'undefined' && import.meta.env?.BASE_URL) || '/';
     const normalizedBase = base.endsWith('/') ? base : `${base}/`;
@@ -332,6 +363,7 @@ export async function extractTextFromPdf(
   const cMapUrl = new URL(`${normalizedBase}pdfjs/cmaps/`, origin).href;
   const standardFontDataUrl = new URL(`${normalizedBase}pdfjs/standard_fonts/`, origin).href;
 
+  ensurePromiseWithResolvers();
   const loadingTask = pdfjsLib.getDocument({
     data: new Uint8Array(rawBuffer),
     cMapUrl,

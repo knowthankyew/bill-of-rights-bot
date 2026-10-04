@@ -7,10 +7,35 @@ import {
   registerPdfBuffer,
   purgePdfMemory,
   extractTextFromPdf,
+  ensurePromiseWithResolvers,
   DEFAULT_PAGE_CAP,
   MIN_DIGITAL_CHAR_THRESHOLD,
 } from '../../src/core/pdf-engine';
 import { terminateOcrWorker } from '../../src/core/ocr-engine';
+
+// Shared test PDF fixtures
+const digitalTextPdf =
+  '%PDF-1.4\n' +
+  '1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n' +
+  '2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n' +
+  '3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>\nendobj\n' +
+  '4 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n' +
+  '5 0 obj\n<< /Length 170 >>\nstream\n' +
+  'BT\n/F1 12 Tf\n72 712 Td\n(SECTION 1. AUTOMATIC RENEWAL TERMS AND CONDITIONS) Tj\n' +
+  '0 -20 Td\n(This subscription agreement automatically renews every single month.) Tj\nET\n' +
+  'endstream\nendobj\n' +
+  'xref\n0 6\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \n0000000228 00000 n \n0000000305 00000 n \n' +
+  'trailer\n<< /Size 6 /Root 1 0 R >>\n' +
+  'startxref\n528\n%%EOF';
+
+const sparseBlankPdf =
+  '%PDF-1.4\n' +
+  '1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n' +
+  '2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n' +
+  '3 0 obj<</Type/Page/MediaBox[0 0 300 144]/Parent 2 0 R/Resources<<>>>>endobj\n' +
+  'xref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \n' +
+  'trailer<</Size 4/Root 1 0 R>>\n' +
+  'startxref\n206\n%%EOF';
 
 describe('pdf-engine: detection', () => {
   it('identifies PDF files by application/pdf MIME type', () => {
@@ -150,34 +175,34 @@ describe('pdf-engine: memory safeguards & nuclear amnesia', () => {
     expect(DEFAULT_PAGE_CAP).toBe(20);
     expect(MIN_DIGITAL_CHAR_THRESHOLD).toBe(50);
   });
+
+  it('ensures Promise.withResolvers is available even in Node 20 / older runtimes', () => {
+    ensurePromiseWithResolvers();
+    expect(typeof (Promise as any).withResolvers).toBe('function');
+    const { promise, resolve, reject } = (Promise as any).withResolvers();
+    expect(promise instanceof Promise).toBe(true);
+    expect(typeof resolve).toBe('function');
+    expect(typeof reject).toBe('function');
+  });
+
+  it('gracefully recovers and extracts text even if Promise.withResolvers was absent initially', async () => {
+    delete (Promise as any).withResolvers;
+    expect((Promise as any).withResolvers).toBeUndefined();
+
+    const pdfBuffer = new TextEncoder().encode(digitalTextPdf).buffer;
+    const result = await extractTextFromPdf(pdfBuffer, {
+      startPage: 1,
+      maxPages: 1,
+      customRasterizer: vi.fn(),
+    });
+
+    expect(result.mode).toBe('digital');
+    expect(result.text).toContain('SECTION 1. AUTOMATIC RENEWAL');
+    expect(typeof (Promise as any).withResolvers).toBe('function');
+  });
 });
 
 describe('pdf-engine: extractTextFromPdf end-to-end execution', () => {
-  // Construct a minimal valid 1-page PDF with text stream (> 50 legible characters)
-  const digitalTextPdf =
-    '%PDF-1.4\n' +
-    '1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n' +
-    '2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n' +
-    '3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>\nendobj\n' +
-    '4 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n' +
-    '5 0 obj\n<< /Length 170 >>\nstream\n' +
-    'BT\n/F1 12 Tf\n72 712 Td\n(SECTION 1. AUTOMATIC RENEWAL TERMS AND CONDITIONS) Tj\n' +
-    '0 -20 Td\n(This subscription agreement automatically renews every single month.) Tj\nET\n' +
-    'endstream\nendobj\n' +
-    'xref\n0 6\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \n0000000228 00000 n \n0000000305 00000 n \n' +
-    'trailer\n<< /Size 6 /Root 1 0 R >>\n' +
-    'startxref\n528\n%%EOF';
-
-  // Construct a minimal valid 1-page blank PDF (0 characters)
-  const sparseBlankPdf =
-    '%PDF-1.4\n' +
-    '1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n' +
-    '2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n' +
-    '3 0 obj<</Type/Page/MediaBox[0 0 300 144]/Parent 2 0 R/Resources<<>>>>endobj\n' +
-    'xref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \n' +
-    'trailer<</Size 4/Root 1 0 R>>\n' +
-    'startxref\n206\n%%EOF';
-
   it('routes digital text PDF to Path A (Fast Path) without calling OCR engine', async () => {
     const pdfBuffer = new TextEncoder().encode(digitalTextPdf).buffer;
     const progressEvents: any[] = [];

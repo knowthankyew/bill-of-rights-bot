@@ -7,6 +7,9 @@ import { Scorecard } from './components/Scorecard';
 import { ClauseCardGrid } from './components/ClauseCardGrid';
 import { RemedyStudio } from './components/RemedyStudio';
 import { PrivacyAuditModal } from './components/PrivacyAuditModal';
+import { HandoffBanner } from './components/HandoffBanner';
+import { useKTYHandoff } from '@knowthankyew/privacy-telemetry/react';
+import { mapHandoffToAuditReport } from './core/handoff-adapter';
 
 import { JurisdictionCode, StatuteDataset } from './contracts/statute';
 import { AuditReport } from './contracts/audit';
@@ -33,6 +36,7 @@ export const App: React.FC = () => {
   const [liveAnnouncement, setLiveAnnouncement] = useState<string>('');
 
   const claims = telemetry.getPrivacyClaims();
+  const { payload: handoffPayload, isHandoffActive, clearHandoff } = useKTYHandoff('bill-of-rights-bot');
 
   // Probe local sidecar on startup (non-blocking, loopback only)
   useEffect(() => {
@@ -40,9 +44,24 @@ export const App: React.FC = () => {
       setSidecarActive(status.isAvailable);
     });
 
-    // Run initial audit on the seed gym sample
-    runAudit(gymSample, selectedJurisdiction);
-  }, []);
+    if (handoffPayload) {
+      const report = mapHandoffToAuditReport(handoffPayload, selectedJurisdiction);
+      setAuditReport(report);
+      setLiveAnnouncement(
+        `Handoff evaluation imported for ${handoffPayload.domain}. Evaluated ${report.clauses.length} findings.`
+      );
+    } else {
+      // Run initial audit on the seed gym sample
+      runAudit(gymSample, selectedJurisdiction);
+    }
+  }, [handoffPayload]);
+
+  useEffect(() => {
+    if (handoffPayload) {
+      const report = mapHandoffToAuditReport(handoffPayload, selectedJurisdiction);
+      setAuditReport(report);
+    }
+  }, [selectedJurisdiction, handoffPayload]);
 
   const runAudit = (text: string, jurisdiction: JurisdictionCode) => {
     if (!text.trim()) {
@@ -114,7 +133,14 @@ export const App: React.FC = () => {
     runAudit(sample, selectedJurisdiction);
   };
 
+  const handleClearHandoff = () => {
+    clearHandoff();
+    setTermsText(gymSample);
+    runAudit(gymSample, selectedJurisdiction);
+  };
+
   const handleBurnData = () => {
+    clearHandoff();
     telemetry.burn();
     terminateOcrWorker();
     purgePdfMemory();
@@ -170,13 +196,17 @@ export const App: React.FC = () => {
 
         {/* Center Canvas */}
         <section className="center-canvas" aria-label="Agreement Workspace">
-          <AgreementWorkspace
-            termsText={termsText}
-            onTermsTextChange={setTermsText}
-            onAudit={handleAuditClick}
-            onLoadSample={handleLoadSample}
-            isAuditing={isAuditing}
-          />
+          {isHandoffActive && handoffPayload ? (
+            <HandoffBanner payload={handoffPayload} onClear={handleClearHandoff} />
+          ) : (
+            <AgreementWorkspace
+              termsText={termsText}
+              onTermsTextChange={setTermsText}
+              onAudit={handleAuditClick}
+              onLoadSample={handleLoadSample}
+              isAuditing={isAuditing}
+            />
+          )}
 
           {auditReport && (
             <>

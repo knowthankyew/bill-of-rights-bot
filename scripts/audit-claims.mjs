@@ -49,26 +49,37 @@ const REQUIRED_STATUTES = [
  * Audit 1: Zero-Egress & Air-Gapped Privacy Invariants
  */
 export function auditZeroEgress(errors = []) {
-  // Check index.html CSP
+  // Check index.html CSP tag directly, ignoring comments
   const indexPath = resolve(REPO_ROOT, 'index.html');
   if (!existsSync(indexPath)) {
     errors.push('Missing index.html file');
   } else {
-    const indexContent = readFileSync(indexPath, 'utf-8');
-    // Ensure connect-src does not allow external internet domains
-    const connectMatch = indexContent.match(/connect-src\s+([^;"]+)/);
-    if (!connectMatch) {
-      errors.push("index.html CSP violation: Missing connect-src directive");
+    const rawIndex = readFileSync(indexPath, 'utf-8');
+    const indexContent = rawIndex.replace(/<!--[\s\S]*?-->/g, '');
+    const metaCspMatch =
+      indexContent.match(/<meta\s+[^>]*http-equiv\s*=\s*["']Content-Security-Policy["'][^>]*content\s*=\s*(["'])([\s\S]*?)\1[^>]*>/i) ||
+      indexContent.match(/<meta\s+[^>]*content\s*=\s*(["'])([\s\S]*?)\1[^>]*http-equiv\s*=\s*["']Content-Security-Policy["'][^>]*>/i);
+
+    if (!metaCspMatch) {
+      errors.push('index.html CSP violation: Missing active <meta http-equiv="Content-Security-Policy"> tag');
     } else {
-      const allowedConnect = connectMatch[1];
-      const tokens = allowedConnect.split(/\s+/).filter(Boolean);
-      for (const token of tokens) {
-        if (
-          token !== "'self'" &&
-          !token.startsWith('http://localhost') &&
-          !token.startsWith('http://127.0.0.1')
-        ) {
-          errors.push(`index.html CSP violation: Unauthorized remote connect-src token detected: ${token}`);
+      const cspDirectives = metaCspMatch[2].split(';').map((d) => d.trim()).filter(Boolean);
+      const connectDirective = cspDirectives.find((d) => /^connect-src\b/i.test(d));
+      if (!connectDirective) {
+        errors.push('index.html CSP violation: Missing connect-src directive in Content-Security-Policy');
+      } else {
+        const tokens = connectDirective.replace(/^connect-src\s+/i, '').split(/\s+/).filter(Boolean);
+        const PERMITTED_CONNECT_ORIGINS = new Set([
+          "'self'",
+          'http://localhost:8000',
+          'http://127.0.0.1:8000',
+          'http://localhost:11434',
+          'http://127.0.0.1:11434',
+        ]);
+        for (const token of tokens) {
+          if (!PERMITTED_CONNECT_ORIGINS.has(token)) {
+            errors.push(`index.html CSP violation: Unauthorized remote connect-src token detected: ${token}`);
+          }
         }
       }
     }
@@ -97,7 +108,12 @@ export function auditZeroEgress(errors = []) {
             return;
           }
 
-          if (/\b(fetch\s*\(|XMLHttpRequest|navigator\.sendBeacon|new\s+WebSocket)\b/.test(line)) {
+          // Check for forbidden network calls including computed bracket property access
+          if (
+            /(?:\bfetch\s*\(|\b(?:XMLHttpRequest|axios)\b|\[\s*['"`](?:fetch|XMLHttpRequest|sendBeacon|WebSocket|EventSource|axios)['"`]\s*\]|\bnavigator\s*(?:\.\s*sendBeacon|\[\s*['"`]sendBeacon['"`]\s*\])|\bnew\s+(?:WebSocket|EventSource)\b|\bimport\s*\()/.test(
+              line
+            )
+          ) {
             errors.push(`Privacy violation in ${relPath}:${lineIdx + 1}: Unauthorized network primitive detected: ${trimmed}`);
           }
         });
@@ -109,15 +125,44 @@ export function auditZeroEgress(errors = []) {
     scanFiles(srcDir);
   }
 
-  // Check telemetry allowlist does not contain PII or agreement text
+  // Check telemetry allowlist does not contain PII or agreement text, and verifies memory-only default
   const telemetryPath = resolve(REPO_ROOT, 'src/core/telemetry.ts');
   if (existsSync(telemetryPath)) {
     const telContent = readFileSync(telemetryPath, 'utf-8');
     const prohibitedTelemetryKeys = ['agreement_text', 'contract_text', 'subscriber_name', 'email', 'vendor_name', 'card_number'];
-    for (const key of prohibitedTelemetryKeys) {
-      if (telContent.includes(`'${key}'`)) {
-        errors.push(`Privacy violation in telemetry.ts: Prohibited PII attribute key detected in allowlist: '${key}'`);
+
+    // Parse BOT_ALLOWLIST_KEYS definition
+    const allowlistMatch = telContent.match(/BOT_ALLOWLIST_KEYS[^{]*=\s*new\s+Set\(\[\s*([\s\S]*?)\s*\]\)/);
+    if (!allowlistMatch) {
+      errors.push('Privacy violation in telemetry.ts: BOT_ALLOWLIST_KEYS set definition not found');
+    } else {
+      const parsedKeys = allowlistMatch[1]
+        .split('\n')
+        .map((line) => line.replace(/\/\/.*$/, '').trim())
+        .filter(Boolean)
+        .map((item) => item.replace(/['",]/g, '').trim())
+        .filter(Boolean);
+
+      if (parsedKeys.length === 0) {
+        errors.push('Privacy violation in telemetry.ts: BOT_ALLOWLIST_KEYS is empty');
       }
+
+      for (const key of prohibitedTelemetryKeys) {
+        if (parsedKeys.includes(key)) {
+          errors.push(`Privacy violation in telemetry.ts: Prohibited PII attribute key detected in allowlist: '${key}'`);
+        }
+      }
+    }
+
+    // Verify default configuration and MemoryExporter usage
+    if (!/new\s+MemoryExporter\s*\(/.test(telContent)) {
+      errors.push('Privacy violation in telemetry.ts: MemoryExporter must be instantiated as the default exporter');
+    }
+    if (!telContent.includes("mode: 'memory_only'")) {
+      errors.push("Privacy violation in telemetry.ts: Default mode must be explicitly 'memory_only'");
+    }
+    if (!telContent.includes("serviceName: 'bill-of-rights-bot'")) {
+      errors.push("Privacy violation in telemetry.ts: Default serviceName must be 'bill-of-rights-bot'");
     }
   }
 }
@@ -141,15 +186,24 @@ export function auditStatutoryParity(errors = []) {
   const readmeContent = readFileSync(readmePath, 'utf-8');
   const noticeContent = readFileSync(noticeGenPath, 'utf-8');
 
+  const policiesDir = resolve(REPO_ROOT, 'policies/jurisdictions');
+  let combinedPolicyContent = '';
+  if (!existsSync(policiesDir)) {
+    errors.push(`Missing policies/jurisdictions directory at: ${policiesDir}`);
+  } else {
+    combinedPolicyContent = readdirSync(policiesDir)
+      .filter((f) => f.endsWith('.json'))
+      .map((f) => readFileSync(resolve(policiesDir, f), 'utf-8'))
+      .join('\n');
+  }
+
   for (const statute of REQUIRED_STATUTES) {
     if (!readmeContent.includes(statute)) {
       errors.push(`README.md lacks declared statutory reference: '${statute}'`);
     }
-    // Statutes should either be in README and enforced by policy packs / notice generator
     const inNotice = noticeContent.includes(statute);
-    const inPolicies = readdirSync(resolve(REPO_ROOT, 'policies/jurisdictions'))
-      .some(f => readFileSync(resolve(REPO_ROOT, 'policies/jurisdictions', f), 'utf-8').includes(statute));
-    
+    const inPolicies = combinedPolicyContent.includes(statute);
+
     if (!inNotice && !inPolicies) {
       errors.push(`Missing statutory enforcement in notice generator or policy packs for: '${statute}'`);
     }
@@ -221,11 +275,16 @@ export function auditPolicyPacks(errors = []) {
 /**
  * Audit 5: Portfolio Master Brief Parity
  */
-export function auditPortfolioMasterBrief(errors = [], { requireBrief = false } = {}) {
-  const briefCandidates = [
-    resolve(DEV_ROOT, 'KNOWTHANKYEW_PORTFOLIO_MASTER_BRIEF.md'),
-    resolve(REPO_ROOT, 'KNOWTHANKYEW_PORTFOLIO_MASTER_BRIEF.md'),
-  ];
+export function auditPortfolioMasterBrief(
+  errors = [],
+  { requireBrief = false, overrideBriefPath = null } = {}
+) {
+  const briefCandidates = overrideBriefPath
+    ? [overrideBriefPath]
+    : [
+        resolve(DEV_ROOT, 'KNOWTHANKYEW_PORTFOLIO_MASTER_BRIEF.md'),
+        resolve(REPO_ROOT, 'KNOWTHANKYEW_PORTFOLIO_MASTER_BRIEF.md'),
+      ];
   const briefPath = briefCandidates.find((p) => existsSync(p));
 
   if (!briefPath) {
@@ -256,7 +315,7 @@ export function auditPortfolioMasterBrief(errors = [], { requireBrief = false } 
 
   if (documentedCount !== actualCount) {
     errors.push(
-      `Portfolio Brief Drift: KNOWTHANKYEW_PORTFOLIO_MASTER_BRIEF.md documents ${documentedCount}/${documentedCount} tests, but actual test suite has ${actualCount} tests.`
+      `Portfolio Brief Drift: KNOWTHANKYEW_PORTFOLIO_MASTER_BRIEF.md documents ${match[1]}/${match[2]} tests, but actual test suite has ${actualCount} tests.`
     );
     return false;
   }

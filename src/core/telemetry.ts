@@ -87,9 +87,15 @@ export function getPrivacyClaims(report: PrivacyAuditReport): PrivacyClaims {
 }
 
 export class TelemetryManager extends BaseTelemetryManager {
+  public readonly exporter: MemoryExporter = new MemoryExporter();
+
   constructor(customConfig?: Partial<TelemetryConfig>) {
     super(
-      { serviceName: 'bill-of-rights-bot', ...customConfig },
+      {
+        serviceName: 'bill-of-rights-bot',
+        mode: 'memory_only',
+        ...customConfig,
+      },
       BOT_ALLOWLIST_KEYS
     );
   }

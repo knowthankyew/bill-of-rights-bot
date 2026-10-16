@@ -139,29 +139,53 @@ export const App: React.FC = () => {
     runAudit(gymSample, selectedJurisdiction);
   };
 
-  const handleBurnData = () => {
+  const handleBurnData = async () => {
     clearHandoff();
     telemetry.burn();
     terminateOcrWorker();
     purgePdfMemory();
+
+    const cleanupPromises: Promise<unknown>[] = [];
+
     try {
       localStorage.clear();
       sessionStorage.clear();
+
       if (typeof window !== 'undefined' && 'caches' in window) {
-        window.caches.keys().then((keys) => {
-          keys.forEach((k) => window.caches.delete(k));
-        });
+        cleanupPromises.push(
+          window.caches
+            .keys()
+            .then((keys) => Promise.allSettled(keys.map((k) => window.caches.delete(k))))
+            .catch(() => {})
+        );
       }
-      if (typeof window !== 'undefined' && 'indexedDB' in window && typeof indexedDB.databases === 'function') {
-        indexedDB.databases().then((dbs) => {
-          for (const db of dbs) {
-            if (db.name) indexedDB.deleteDatabase(db.name);
-          }
-        }).catch(() => {});
+
+      if (
+        typeof window !== 'undefined' &&
+        'indexedDB' in window &&
+        typeof indexedDB.databases === 'function'
+      ) {
+        cleanupPromises.push(
+          indexedDB
+            .databases()
+            .then((dbs) => {
+              const deletions = dbs
+                .map((db) => db.name)
+                .filter((name): name is string => typeof name === 'string' && name.length > 0)
+                .map((name) => indexedDB.deleteDatabase(name));
+              return Promise.allSettled(deletions);
+            })
+            .catch(() => {})
+        );
       }
     } catch {
-      // Silently ignore storage disposal errors
+      // Silently ignore synchronous storage disposal errors
     }
+
+    if (cleanupPromises.length > 0) {
+      await Promise.allSettled(cleanupPromises);
+    }
+
     setTermsText('');
     setAuditReport(null);
     setInspectedStatute(null);

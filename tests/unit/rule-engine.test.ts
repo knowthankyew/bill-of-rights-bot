@@ -119,6 +119,7 @@ describe('rule-engine', () => {
     expect(report.summary.totalClauses).toBe(0);
     expect(report.summary.unlawfulCount).toBe(0);
     expect(report.summary.watchCount).toBe(0);
+    expect(report.summary.riskLevel).toBe('Compliant');
     expect(report.summary.scorePercentage).toBe(0);
     expect(report.summary.unconditionalGiftTriggered).toBe(false);
   });

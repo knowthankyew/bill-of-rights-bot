@@ -18,7 +18,7 @@
  */
 
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
+import { resolve, dirname, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -94,12 +94,17 @@ export function auditZeroEgress(errors = []) {
       if (entry.isDirectory()) {
         scanFiles(fullPath);
       } else if (/\.(ts|tsx|js|mjs)$/.test(entry.name)) {
-        const relPath = fullPath.replace(REPO_ROOT + '/', '');
-        const content = readFileSync(fullPath, 'utf-8');
-        const lines = content.split('\n');
+        const relPath = relative(REPO_ROOT, fullPath).split(sep).join('/');
+        const rawContent = readFileSync(fullPath, 'utf-8');
+        // Strip block comments while preserving newlines for accurate line numbers
+        const noBlockComments = rawContent.replace(/\/\*[\s\S]*?\*\//g, (match) => {
+          const newlines = match.match(/\n/g);
+          return newlines ? newlines.join('') : '';
+        });
+        const lines = noBlockComments.split('\n');
         lines.forEach((line, lineIdx) => {
-          const trimmed = line.trim();
-          if (trimmed.startsWith('//') || trimmed.startsWith('*') || trimmed.startsWith('/*')) {
+          const trimmed = line.replace(/\/\/.*$/, '').trim();
+          if (!trimmed) {
             return;
           }
 
@@ -111,7 +116,7 @@ export function auditZeroEgress(errors = []) {
           // Check for forbidden network calls including computed bracket property access
           if (
             /(?:\bfetch\s*\(|\b(?:XMLHttpRequest|axios)\b|\[\s*['"`](?:fetch|XMLHttpRequest|sendBeacon|WebSocket|EventSource|axios)['"`]\s*\]|\bnavigator\s*(?:\.\s*sendBeacon|\[\s*['"`]sendBeacon['"`]\s*\])|\bnew\s+(?:WebSocket|EventSource)\b|\bimport\s*\()/.test(
-              line
+              trimmed
             )
           ) {
             errors.push(`Privacy violation in ${relPath}:${lineIdx + 1}: Unauthorized network primitive detected: ${trimmed}`);

@@ -149,37 +149,54 @@ export const App: React.FC = () => {
 
     try {
       localStorage.clear();
-      sessionStorage.clear();
-
-      if (typeof window !== 'undefined' && 'caches' in window) {
-        cleanupPromises.push(
-          window.caches
-            .keys()
-            .then((keys) => Promise.allSettled(keys.map((k) => window.caches.delete(k))))
-            .catch(() => {})
-        );
-      }
-
-      if (
-        typeof window !== 'undefined' &&
-        'indexedDB' in window &&
-        typeof indexedDB.databases === 'function'
-      ) {
-        cleanupPromises.push(
-          indexedDB
-            .databases()
-            .then((dbs) => {
-              const deletions = dbs
-                .map((db) => db.name)
-                .filter((name): name is string => typeof name === 'string' && name.length > 0)
-                .map((name) => indexedDB.deleteDatabase(name));
-              return Promise.allSettled(deletions);
-            })
-            .catch(() => {})
-        );
-      }
     } catch {
-      // Silently ignore synchronous storage disposal errors
+      // Ignore localStorage errors
+    }
+
+    try {
+      sessionStorage.clear();
+    } catch {
+      // Ignore sessionStorage errors
+    }
+
+    if (typeof window !== 'undefined' && 'caches' in window) {
+      cleanupPromises.push(
+        window.caches
+          .keys()
+          .then((keys) => Promise.allSettled(keys.map((k) => window.caches.delete(k))))
+          .catch(() => {})
+      );
+    }
+
+    if (
+      typeof window !== 'undefined' &&
+      'indexedDB' in window &&
+      typeof indexedDB.databases === 'function'
+    ) {
+      cleanupPromises.push(
+        indexedDB
+          .databases()
+          .then((dbs) => {
+            const deletions = dbs
+              .map((db) => db.name)
+              .filter((name): name is string => typeof name === 'string' && name.length > 0)
+              .map(
+                (name) =>
+                  new Promise<void>((resolve) => {
+                    try {
+                      const req = indexedDB.deleteDatabase(name);
+                      req.onsuccess = () => resolve();
+                      req.onerror = () => resolve();
+                      req.onblocked = () => resolve();
+                    } catch {
+                      resolve();
+                    }
+                  })
+              );
+            return Promise.allSettled(deletions);
+          })
+          .catch(() => {})
+      );
     }
 
     if (cleanupPromises.length > 0) {

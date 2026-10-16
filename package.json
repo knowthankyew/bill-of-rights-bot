@@ -14,6 +14,7 @@
     "audit:claims": "node scripts/audit-claims.mjs"
   },
   "dependencies": {
+    "@knowthankyew/policy-packs": "file:../policy-packs",
     "@knowthankyew/privacy-telemetry": "file:../privacy-telemetry/packages/privacy-telemetry",
     "pdfjs-dist": "^4.10.38",
     "react": "^19.0.0",

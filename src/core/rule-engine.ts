@@ -10,21 +10,9 @@ import {
 } from '../contracts/statute';
 import { AuditReport, AuditSummary, RiskLevel } from '../contracts/audit';
 
-import ftcData from '../../data/statutes/ftc.json';
-import californiaData from '../../data/statutes/california.json';
-import newYorkData from '../../data/statutes/new-york.json';
-import illinoisData from '../../data/statutes/illinois.json';
-import coloradoData from '../../data/statutes/colorado.json';
-import delawareData from '../../data/statutes/delaware.json';
+import { STATUTE_CATALOG as CENTRAL_CATALOG } from '@knowthankyew/policy-packs/subscriptions';
 
-export const STATUTE_CATALOG: Record<JurisdictionCode, StatuteDataset> = {
-  FTC: ftcData as unknown as StatuteDataset,
-  CA: californiaData as unknown as StatuteDataset,
-  NY: newYorkData as unknown as StatuteDataset,
-  IL: illinoisData as unknown as StatuteDataset,
-  CO: coloradoData as unknown as StatuteDataset,
-  DE: delawareData as unknown as StatuteDataset,
-};
+export const STATUTE_CATALOG: Record<JurisdictionCode, StatuteDataset> = CENTRAL_CATALOG as unknown as Record<JurisdictionCode, StatuteDataset>;
 
 /**
  * Evaluates candidate clauses against statutory rules for a specified jurisdiction.

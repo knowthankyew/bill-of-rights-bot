@@ -144,6 +144,24 @@ export const App: React.FC = () => {
     telemetry.burn();
     terminateOcrWorker();
     purgePdfMemory();
+    try {
+      localStorage.clear();
+      sessionStorage.clear();
+      if (typeof window !== 'undefined' && 'caches' in window) {
+        window.caches.keys().then((keys) => {
+          keys.forEach((k) => window.caches.delete(k));
+        });
+      }
+      if (typeof window !== 'undefined' && 'indexedDB' in window && typeof indexedDB.databases === 'function') {
+        indexedDB.databases().then((dbs) => {
+          for (const db of dbs) {
+            if (db.name) indexedDB.deleteDatabase(db.name);
+          }
+        }).catch(() => {});
+      }
+    } catch {
+      // Silently ignore storage disposal errors
+    }
     setTermsText('');
     setAuditReport(null);
     setInspectedStatute(null);

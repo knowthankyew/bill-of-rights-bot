@@ -3,7 +3,7 @@
  * Strips formatting artifacts, normalizes typography, and unifies whitespace.
  */
 export function normalizeText(input: string): string {
-  if (!input) return '';
+  if (!input || typeof input !== 'string') return '';
 
   return input
     // Replace non-breaking spaces and zero-width spaces

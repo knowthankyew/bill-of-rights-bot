@@ -164,7 +164,7 @@ export const RemedyStudio: React.FC<RemedyStudioProps> = ({ auditReport }) => {
       </div>
 
       <p style={{ fontSize: '0.7rem', color: 'var(--text-dim)', lineHeight: 1.4 }}>
-        💡 <strong>Certified Mail Tip:</strong> When dealing with uncooperative vendors, printing this notice and sending via USPS Certified Mail with Return Receipt provides definitive legal proof of cancellation under federal law.
+        💡 <strong>Certified Mail Tip:</strong> When dealing with uncooperative vendors, printing this notice and sending via USPS Certified Mail with Return Receipt provides verifiable, timestamped proof of delivery under federal law.
       </p>
     </aside>
   );

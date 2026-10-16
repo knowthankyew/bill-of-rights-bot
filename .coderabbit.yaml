@@ -1,0 +1,86 @@
+# CodeRabbit Configuration for BillOfRightsBot
+# Targeted Scope: Consumer Subscription Agreement Audit, FTC Click-to-Cancel & State ARL Compliance, Air-Gapped OCR/PDF Ingestion, Zero-Egress Privacy & Supply Chain Assurance
+
+language: "en-US"
+
+reviews:
+  profile: "assertive"
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false
+  sequence_diagrams: true
+  auto_review:
+    enabled: true
+    drafts: false
+
+  # Filter out compiled distributions, media files, demo recordings, and local caches
+  path_filters:
+    - "!**/*.mp4"
+    - "!**/*.gif"
+    - "!**/*.webm"
+    - "!**/*.png"
+    - "!**/*.svg"
+    - "!dist/**"
+    - "!node_modules/**"
+    - "!bom.json"
+    - "!dist/bom.json"
+    - "!demo.gif"
+    - "!demo.mp4"
+
+  path_instructions:
+    - path: "**/*"
+      instructions: |
+        You are performing an exhaustive architectural, security, legal, and data privacy audit for "BillOfRightsBot", an open-source, local-first consumer protection engine auditing subscription contracts and Terms of Service (ToS) against the FTC "Click-to-Cancel" rule and state Automatic Renewal Laws (ARL).
+
+        Evaluate all code against these non-negotiable architectural invariants:
+
+        1. ZERO SUBSCRIPTION EGRESS & AIR-GAPPED PRIVACY (CRITICAL):
+           - In `src/**`, strictly prohibit remote network egress primitives (`fetch`, `XMLHttpRequest`, `navigator.sendBeacon`, external telemetry, remote script loaders). All document normalization, clause segmentation, OCR text extraction, PDF parsing, and remedy generation must execute 100% locally within the user's browser runtime.
+           - Prohibit network egress in `index.html` via strict Content Security Policy (CSP). Only loopback connections (`localhost:8000`, `localhost:11434`) for optional local sidecar LLM inference are permitted.
+           - In `src/core/telemetry.ts`, verify telemetry runs in `memory_only` mode with `MemoryExporter` by default. Operational attributes must strictly adhere to `BOT_ALLOWLIST_KEYS`. Raw agreement text, user-pasted contracts, subscriber names, email addresses, and merchant names are strictly prohibited from telemetry spans or audit events.
+           - Nuclear Amnesia / "Burn Local Data": Ensure the instant purge command completely terminates active OCR workers (`terminateOcrWorker`), purges PDF memory buffers (`purgePdfMemory`), wipes telemetry buffers, and clears all client storage (`localStorage`, `sessionStorage`, `caches`, `indexedDB`).
+
+        2. STATUTORY GROUNDING & DISPUTE PARITY:
+           - In `src/core/rule-engine.ts` and `policies/jurisdictions/**`:
+             - Federal Trade Commission (FTC) Negative Option Rule (16 CFR Part 425) and ROSCA (15 U.S.C. §§ 8401–8405) form the universal federal baseline for all evaluations.
+             - State Automatic Renewal Laws (ARL) must accurately ground statutory citations: California (Cal. Bus. & Prof. Code §§ 17600–17606), New York (N.Y. Gen. Bus. Law § 527-a), Illinois (815 ILCS 601/), Colorado (Colo. Rev. Stat. § 6-1-732), and Delaware (Del. Code Ann. tit. 6, § 2734).
+             - California Unconditional Gift Remedy: Under Cal. Bus. & Prof. Code § 17603, verify that any unlawful renewal clause in CA jurisdiction triggers the `unconditionalGiftTriggered` flag.
+             - Ensure compiled rule regex patterns are executed safely without ReDoS vulnerabilities.
+
+        3. IN-BROWSER PDF & OCR EXTRACTION PIPELINES:
+           - In `src/core/pdf-engine.ts` and `src/core/ocr-engine.ts`:
+             - Ensure PDF parsing operates entirely offline with locally hosted worker scripts and assets (`/pdfjs/`).
+             - Enforce page caps (default: 20 pages), memory buffer deallocation, and graceful fallback between digital text (Path A) and rasterized OCR (Path B).
+             - Ensure Promise.withResolvers polyfill is reliably loaded across environments.
+
+        4. STATUTORY NOTICE GENERATOR & UPL SAFE HARBORS:
+           - In `src/core/notice-generator.ts`:
+             - Ensure generated cancellation notices, FTC complaint drafts, and unconditional gift restitution demands contain accurate legal citations, mandatory directives, and self-advocacy footers.
+             - Ensure non-waivable Unauthorized Practice of Law (UPL) legal disclaimers are prominently displayed in all generated notices and user interfaces.
+
+        5. TESTING & CLAIMS AUDITING:
+           - In `scripts/audit-claims.mjs` and `tests/unit/claims-linter.test.ts`, enforce static parity between documentation (`README.md`, `ARCHITECTURE.md`), statutory legal citations, and test inventories.
+           - Prohibit unprovable marketing adjectives ('bulletproof', 'conclusive', 'definitive', 'infinitely scalable').
+           - Verify that `KNOWTHANKYEW_PORTFOLIO_MASTER_BRIEF.md` test counts match actual test inventories.
+
+    - path: "src/core/**"
+      instructions: "Audit core parsing, segmentation, rule evaluation, and notice generation engines for performance, ReDoS safety, memory disposal, and zero network leakage."
+
+    - path: "src/components/**"
+      instructions: "Audit React components for accessible UI controls (WCAG AA), screen reader announcers, secure input handling, and nuclear amnesia data burning."
+
+    - path: "policies/**"
+      instructions: "Audit statutory policy packs and schema conformance for federal and state jurisdictions."
+
+    - path: "tests/**"
+      instructions: "Audit test suites for edge-case coverage (empty texts, long documents, OCR worker termination, ReDoS immunity, and claims parity)."
+
+knowledge_base:
+  opt_out: false
+  learnings:
+    scope: "auto"
+  linked_repositories:
+    - repository: "knowthankyew/privacy-telemetry"
+      instructions: "Contains canonical zero-egress invariants, cryptographic evidence sealing standards, and privacy schemas for the KnowThankYew suite."
+    - repository: "knowthankyew/portfolio-admin"
+      instructions: "Contains portfolio integration standards, Master Brief assertions, and administrative compliance specifications."

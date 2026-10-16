@@ -113,4 +113,13 @@ describe('rule-engine', () => {
     expect(report.summary.scorePercentage).toBe(100);
     expect(report.summary.unconditionalGiftTriggered).toBe(false);
   });
+
+  it('handles empty clause arrays gracefully with zero score and compliant status', () => {
+    const report = evaluateAgreement([], 'CA', 'Empty Agreement');
+    expect(report.summary.totalClauses).toBe(0);
+    expect(report.summary.unlawfulCount).toBe(0);
+    expect(report.summary.watchCount).toBe(0);
+    expect(report.summary.scorePercentage).toBe(0);
+    expect(report.summary.unconditionalGiftTriggered).toBe(false);
+  });
 });

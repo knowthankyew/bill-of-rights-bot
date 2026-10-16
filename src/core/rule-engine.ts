@@ -210,7 +210,7 @@ function calculateSummary(
     unlawfulCount > 0 &&
     (jurisdiction === 'CA' || clauses.some(c => c.matchedRuleId?.startsWith('CA-ARL')));
 
-  const rawScore = 100 - unlawfulCount * 25 - watchCount * 10;
+  const rawScore = clauses.length === 0 ? 0 : 100 - unlawfulCount * 25 - watchCount * 10;
   const scorePercentage = Math.max(0, Math.min(100, rawScore));
 
   return {

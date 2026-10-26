@@ -20,6 +20,25 @@
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { resolve, dirname, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import {
+  stripLineComment,
+  stripBlockComments,
+  FORBIDDEN_NETWORK_REGEX,
+  testNetworkPrimitive,
+  scanSourceForNetworkPrimitives,
+  scanDocumentationForVocabulary,
+  BANNED_VOCABULARY,
+} from './claims-linter-core.mjs';
+
+export {
+  stripLineComment,
+  stripBlockComments,
+  FORBIDDEN_NETWORK_REGEX,
+  testNetworkPrimitive,
+  scanSourceForNetworkPrimitives,
+  scanDocumentationForVocabulary,
+  BANNED_VOCABULARY,
+};
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -102,32 +121,10 @@ export function auditZeroEgress(errors = []) {
       } else if (/\.(ts|tsx|js|mjs)$/.test(entry.name)) {
         const relPath = relative(REPO_ROOT, fullPath).split(sep).join('/');
         const rawContent = readFileSync(fullPath, 'utf-8');
-        // Strip block comments while preserving newlines for accurate line numbers
-        const noBlockComments = rawContent.replace(/\/\*[\s\S]*?\*\//g, (match) => {
-          const newlines = match.match(/\n/g);
-          return newlines ? newlines.join('') : '';
+        const fileErrors = scanSourceForNetworkPrimitives(rawContent, relPath, {
+          isPermittedLine: (_line, _idx, path) => path === 'src/core/sidecar-client.ts',
         });
-        const lines = noBlockComments.split('\n');
-        lines.forEach((line, lineIdx) => {
-          const trimmed = line.replace(/\/\/.*$/, '').trim();
-          if (!trimmed) {
-            return;
-          }
-
-          // Permit loopback probe exclusively in sidecar-client.ts
-          if (relPath === 'src/core/sidecar-client.ts') {
-            return;
-          }
-
-          // Check for forbidden network calls including aliased assignment, computed bracket access, Image/Worker beacons, and createElement
-          if (
-            /(?:\b(?:fetch|\??\.\s*fetch)\s*\(|=\s*fetch\b|\b(?:XMLHttpRequest|axios)\b|\[\s*['"`](?:fetch|XMLHttpRequest|sendBeacon|WebSocket|EventSource|axios)['"`]\s*\]|\bnavigator\s*(?:\??\.\s*sendBeacon|\[\s*['"`]sendBeacon['"`]\s*\])|\bnew\s+(?:WebSocket|EventSource|Image)\b|\bnew\s+Worker\s*\(\s*(?:new\s+URL\s*\(\s*)?['\"`]https?:\/\/|\bimport\s*\(\s*['"`]https?:\/\/|\bdocument\s*(?:\??\.\s*createElement|\[\s*['"`]createElement['"`]\s*\])\s*\(\s*['"`]script['"`]\s*\)|\b(?:window|globalThis|self)\s*(?:\.\s*fetch|\[\s*['"`]fetch['"`]\s*\]))/.test(
-              trimmed
-            )
-          ) {
-            errors.push(`Privacy violation in ${relPath}:${lineIdx + 1}: Unauthorized network primitive detected: ${trimmed}`);
-          }
-        });
+        errors.push(...fileErrors);
       }
     }
   }

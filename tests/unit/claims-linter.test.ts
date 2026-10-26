@@ -7,7 +7,6 @@ import {
   auditPortfolioMasterBrief,
   testNetworkPrimitive,
   scanSourceForNetworkPrimitives,
-  stripLineComment,
 // @ts-expect-error - ESM audit script without bundled declaration
 } from '../../scripts/audit-claims.mjs';
 

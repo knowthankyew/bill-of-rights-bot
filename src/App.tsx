@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Header } from './components/Header';
 import { StatuteRail } from './components/StatuteRail';
 import { StatuteModal } from './components/StatuteModal';
@@ -37,31 +37,34 @@ export const App: React.FC = () => {
 
   const claims = telemetry.getPrivacyClaims();
   const { payload: handoffPayload, isHandoffActive, clearHandoff } = useKTYHandoff('bill-of-rights-bot');
+  const hasRunInitialAuditRef = useRef(false);
+  const announcedHandoffRef = useRef<string | null>(null);
 
   // Probe local sidecar on startup (non-blocking, loopback only)
   useEffect(() => {
     probeLocalSidecar().then((status) => {
       setSidecarActive(status.isAvailable);
     });
+  }, []);
 
-    if (handoffPayload) {
+  useEffect(() => {
+    if (isHandoffActive && handoffPayload) {
+      hasRunInitialAuditRef.current = true;
       const report = mapHandoffToAuditReport(handoffPayload, selectedJurisdiction);
       setAuditReport(report);
-      setLiveAnnouncement(
-        `Handoff evaluation imported for ${handoffPayload.domain}. Evaluated ${report.clauses.length} findings.`
-      );
-    } else {
+      const handoffKey = `${handoffPayload.scanTimestamp}:${handoffPayload.findings.length}`;
+      if (announcedHandoffRef.current !== handoffKey) {
+        announcedHandoffRef.current = handoffKey;
+        setLiveAnnouncement(
+          `Handoff evaluation imported for ${handoffPayload.domain}. Evaluated ${report.clauses.length} findings.`
+        );
+      }
+    } else if (!hasRunInitialAuditRef.current) {
+      hasRunInitialAuditRef.current = true;
       // Run initial audit on the seed gym sample
       runAudit(gymSample, selectedJurisdiction);
     }
-  }, [handoffPayload]);
-
-  useEffect(() => {
-    if (handoffPayload) {
-      const report = mapHandoffToAuditReport(handoffPayload, selectedJurisdiction);
-      setAuditReport(report);
-    }
-  }, [selectedJurisdiction, handoffPayload]);
+  }, [selectedJurisdiction, handoffPayload, isHandoffActive]);
 
   const runAudit = (text: string, jurisdiction: JurisdictionCode) => {
     if (!text.trim()) {
@@ -102,17 +105,27 @@ export const App: React.FC = () => {
   };
 
   const handleAuditClick = () => {
+    hasRunInitialAuditRef.current = true;
+    announcedHandoffRef.current = null;
+    if (isHandoffActive) {
+      clearHandoff();
+    }
     runAudit(termsText, selectedJurisdiction);
   };
 
   const handleJurisdictionChange = (code: JurisdictionCode) => {
     setSelectedJurisdiction(code);
-    if (termsText.trim()) {
+    if (!isHandoffActive && termsText.trim()) {
       runAudit(termsText, code);
     }
   };
 
   const handleLoadSample = (sampleKey: 'gym' | 'streaming' | 'saas' | 'compliant') => {
+    hasRunInitialAuditRef.current = true;
+    announcedHandoffRef.current = null;
+    if (isHandoffActive) {
+      clearHandoff();
+    }
     telemetry.restartSession();
     let sample = '';
     switch (sampleKey) {
@@ -134,12 +147,14 @@ export const App: React.FC = () => {
   };
 
   const handleClearHandoff = () => {
+    announcedHandoffRef.current = null;
     clearHandoff();
     setTermsText(gymSample);
     runAudit(gymSample, selectedJurisdiction);
   };
 
   const handleBurnData = async () => {
+    announcedHandoffRef.current = null;
     clearHandoff();
     telemetry.burn();
     terminateOcrWorker();

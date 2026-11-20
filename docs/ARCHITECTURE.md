@@ -1,6 +1,6 @@
 <!-- diagram-meta
-  last-validated: 2026-11-19
-  validated-commit: 39f831f
+  last-validated: 2026-11-20
+  validated-commit: 01fa898
   covers: [src/**, contracts/**]
   generated-by: manual
 -->

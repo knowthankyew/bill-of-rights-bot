@@ -32,7 +32,7 @@ export const Header: React.FC<HeaderProps> = ({
               </span>
             )}
           </div>
-          <p className="brand-subtitle">FTC "Click-to-Cancel" & State ARL Subscription Auditor</p>
+          <p className="brand-subtitle">ROSCA, FTC Act § 5 & State ARL Subscription Auditor</p>
         </div>
       </div>
 

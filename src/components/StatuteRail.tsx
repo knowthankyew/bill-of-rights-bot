@@ -27,7 +27,7 @@ export const StatuteRail: React.FC<StatuteRailProps> = ({
         role="button"
         tabIndex={0}
         onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onInspectStatute(ftcDataset)}
-        title="Click to view full FTC Click-to-Cancel codified rules"
+        title="Click to view full ROSCA & FTC Act Section 5 codified rules"
       >
         <div className="statute-header">
           <span className="statute-code">FEDERAL</span>

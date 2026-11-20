@@ -1,7 +1,7 @@
 # BillOfRightsBot for Subscriptions ⚖️
 
 > **100% local, statute-grounded subscription agreement auditor.**  
-> Paste or upload a subscription agreement or Terms of Service (ToS) to get an instant breakdown of auto-renewal traps, asymmetric cancellation hurdles, and deceptive negative options against the FTC's **"Click-to-Cancel"** rule and state auto-renewal statutes—with generated cancellation and restitution notices before you get billed.
+> Paste or upload a subscription agreement or Terms of Service (ToS) to get an instant breakdown of auto-renewal traps, asymmetric cancellation hurdles, and deceptive negative options against **ROSCA (`15 U.S.C. § 8403`)**, **FTC Act § 5 (`15 U.S.C. § 45`)**, and state auto-renewal statutes—with generated cancellation and restitution notices before you get billed.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Privacy: 100% Air-Gapped](https://img.shields.io/badge/Privacy-100%25%20Air--Gapped-success.svg)](#privacy--air-gap-guarantee)
@@ -19,21 +19,21 @@ Most consumers never read the fine print when signing up for a gym, streaming ap
 - **Retention Gauntlets ("Saves Mazes"):** Consumers trapped in multi-step counter-offer gauntlets, mandatory exit surveys, and "speak to an account specialist" hurdles.
 - **Hidden Auto-Renewal:** Vague terms buried in tiny boilerplate text disclaiming all refunds upon automatic renewal.
 
-The Federal Trade Commission's **Click-to-Cancel Rule** (16 CFR Part 425) and state Automatic Renewal Laws (ARL) make these predatory practices illegal. **BillOfRightsBot levels the playing field.**
+Federal consumer-protection law—**ROSCA (15 U.S.C. § 8403)** and **FTC Act Section 5 (15 U.S.C. § 45(a))**—alongside state Automatic Renewal Laws (ARL) provide enforceable protections against these deceptive billing practices (note: the FTC's 2024 Click-to-Cancel amendments under 16 CFR Part 425 were vacated by the 8th Circuit in July 2025, so consumer notices rely exclusively on currently binding statutory authorities). **BillOfRightsBot levels the playing field.**
 
 ---
 
 ## Core Flow
 
-1. **Ingest:** Paste agreement text, drop an agreement file (`.txt`, `.md`, `.html`), or **drop/snap a contract photo** (`.png`, `.jpg`, `.webp`) for **100% in-browser offline OCR**. *(Note: PDF ingestion is actively in development for v1.1.0; please use text or image formats for now).*
+1. **Ingest:** Paste agreement text, drop an agreement file (`.pdf`, `.txt`, `.md`, `.html`), or **drop/snap a contract photo** (`.png`, `.jpg`, `.webp`) for **100% in-browser offline OCR**.
 2. **Local Normalization:** In-process text parsing and boundary sanitization with zero external cloud calls and zero telemetry.
 3. **Clause Segmentation:** Heuristic boundary detection extracts discrete agreement clauses.
-4. **Statute Evaluation:** Evaluates clauses against codified statutory rules (Federal FTC + 5 core states):
+4. **Statute Evaluation:** Evaluates clauses against codified statutory rules (Federal ROSCA/FTC + 5 core states):
    - 🔴 **Unlawful Trap:** Direct conflict with codified statutory mandates.
    - 🟡 **Watch:** Borderline or ambiguous terms requiring consumer caution.
    - 🟢 **Compliant:** Terms compliant with statutory transparency and cancellation baselines.
 5. **Actionable Remedy Generation:** Instantly drafts:
-   - **Immediate Click-to-Cancel Demand** (mandating immediate online subscription termination under 16 CFR § 425.6).
+   - **Immediate Cancellation Demand** (invoking ROSCA `15 U.S.C. § 8403(3)`, FTC Act § 5 `15 U.S.C. § 45(a)`, and state online cancellation mandates).
    - **FTC & State AG Complaint Draft** (pre-formatted for `reportfraud.ftc.gov`).
    - **Unconditional Gift Restitution Notice** (invoking Cal. Bus. & Prof. Code § 17603 to demand refund of non-compliant renewal charges).
 6. **Burn Local Data:** One-click button immediately purges all in-memory buffers, parsed clauses, and session state.
@@ -76,7 +76,7 @@ Every single rule in BillOfRightsBot is grounded in official, verified statutes:
 
 | Jurisdiction | Code | Covered Topics & Statutory Citations | Official Source |
 | :--- | :--- | :--- | :--- |
-| **Federal** | `FTC` | - **16 CFR § 425.6(a):** Click-to-Cancel simple cancellation parity mandate.<br>- **16 CFR § 425.6(b):** Prohibition on unsolicited retention offers ("saves") without consent.<br>- **16 CFR § 425.3:** Conspicuous disclosure of negative option billing terms.<br>- **15 U.S.C. §§ 8401–8405:** Restore Online Shoppers' Confidence Act (ROSCA). | [FTC Rule 16 CFR Part 425](https://www.ftc.gov/legal-library/browse/rules/negative-option-rule) |
+| **Federal** | `FTC` | - **15 U.S.C. § 8403 (ROSCA):** Clear upfront disclosure, express informed consent, and simple mechanism to stop recurring charges.<br>- **15 U.S.C. § 45(a) (FTC Act § 5):** Prohibits unfair/deceptive acts including asymmetric cancellation hurdles and retention gauntlets.<br>- *(Note: 2024 16 CFR Part 425 amendments were vacated July 8, 2025 in Custom Communications v. FTC and are not cited in generated notices).* | [ROSCA (15 U.S.C. Ch. 110)](https://www.ftc.gov/legal-library/browse/statutes/restore-online-shoppers-confidence-act) |
 | **California** | `CA` | - **Cal. Bus. & Prof. Code § 17602(c):** Mandatory immediate online cancellation at will.<br>- **Cal. Bus. & Prof. Code § 17602(a)(4):** 15-to-45 day advance renewal notice mandate (AB 390).<br>- **Cal. Bus. & Prof. Code § 17603:** **Unconditional Gift Rule** (non-compliant services deemed unconditional gift; consumer entitled to full restitution). | [California Legislative Info](https://leginfo.legislature.ca.gov) |
 | **New York** | `NY` | - **N.Y. Gen. Bus. Law § 527-a(3):** Simple online cancellation in same medium.<br>- **N.Y. Gen. Bus. Law § 527-a(2):** 15-to-30 day written advance renewal notice requirement.<br>- **N.Y. Gen. Bus. Law § 527-a(4):** Non-compliant automatic renewals are void and unenforceable. | [New York State Senate](https://www.nysenate.gov/legislation/laws/GBS/527-A) |
 | **Illinois** | `IL` | - **815 ILCS 601/10(b):** Mandatory 30-to-60 day written notice prior to renewal.<br>- **815 ILCS 601/10(c):** Online cancellation option for online consumers. | [Illinois General Assembly](https://www.ilga.gov/legislation/ilcs/ilcs3.asp?ActID=2361&ChapterID=67) |

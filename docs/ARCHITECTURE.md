@@ -36,7 +36,7 @@ flowchart LR
 
         subgraph CoreEngine["2. Local Evaluation Core"]
             RuleEngine["⚡ Rule Engine<br/><code>src/core/rule-engine.ts</code>"]
-            PolicyPack["📦 @knowthankyew/policy-packs/subscriptions<br/><i>(ROSCA, FTC Part 425, State ARLs)</i>"]
+            PolicyPack["📦 @knowthankyew/policy-packs/subscriptions<br/><i>(ROSCA, FTC Act § 5, State ARLs)</i>"]
             RemedyEngine["⚖️ Notice Generator<br/><code>src/core/notice-generator.ts</code>"]
         end
 
@@ -101,7 +101,7 @@ sequenceDiagram
     Core->>Core: Extract text, normalize punctuation & clause boundaries
     Core->>Subs: Evaluate statutory subscriptions & arbitration rules
     loop For each candidate clause
-        Subs-->>Core: Check ROSCA, 16 CFR Part 425 & State ARLs
+        Subs-->>Core: Check ROSCA, FTC Act § 5 & State ARLs
     end
     Core-->>UI: Output risk score, flagged clauses & statutory citations
     UI->>Telem: Record scan metric (clause_count, duration_ms)
@@ -109,7 +109,7 @@ sequenceDiagram
 
     Consumer->>UI: Select "Generate Cancellation & Dispute Letter"
     UI->>Remedy: buildNotice(selectedViolations, merchantName)
-    Remedy-->>UI: Formatted statutory demand invoking Click-to-Cancel rules
+    Remedy-->>UI: Formatted statutory demand invoking ROSCA & State ARLs
     UI-->>Consumer: Render editable dispute notice
 
     Consumer->>UI: Click "Burn Local Data"

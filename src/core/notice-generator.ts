@@ -24,20 +24,21 @@ export function generateStatutoryNotice(
     case 'ClickToCancelDemand': {
       return {
         type: 'ClickToCancelDemand',
-        title: 'Statutory Immediate Cancellation Demand (Click-to-Cancel Notice)',
-        statutoryBasis: '16 CFR Part 425 (FTC Negative Option Rule) & State Automatic Renewal Laws',
+        title: 'Statutory Immediate Cancellation Demand (Symmetric Cancellation Notice)',
+        statutoryBasis:
+          'ROSCA (15 U.S.C. § 8403), FTC Act Section 5(a) (15 U.S.C. § 45(a)), & State Automatic Renewal Laws',
         recommendedAction: 'Send via email to vendor customer support and keep a timestamped copy for bank dispute records.',
         content: `DATE: ${dateStr}
 TO: ${vendor} (Customer Service / Billing Department)
 FROM: ${subscriber} (${accountId})
-SUBJECT: FORMAL NOTICE OF IMMEDIATE SUBSCRIPTION TERMINATION PURSUANT TO FTC CLICK-TO-CANCEL MANDATE
+SUBJECT: FORMAL NOTICE OF IMMEDIATE SUBSCRIPTION TERMINATION PURSUANT TO ROSCA & STATE AUTOMATIC RENEWAL LAW
 
 To Whom It May Concern at ${vendor}:
 
 Please accept this correspondence as my formal, unconditional, and immediate cancellation of all subscriptions, recurring memberships, continuous services, and auto-renewal billing associated with my account: ${accountId}.
 
 LEGAL BASIS & CITATIONS:
-1. Federal Trade Commission Negative Option Rule (16 CFR § 425.6): Federal law explicitly mandates that sellers must provide a cancellation mechanism that is at least as simple as the mechanism used to enroll. As I enrolled online, any requirement conditioning cancellation upon calling customer care, speaking with retention agents, or submitting postal mail is strictly unlawful.
+1. Restore Online Shoppers' Confidence Act (ROSCA, 15 U.S.C. § 8403(3)) & FTC Act Section 5(a) (15 U.S.C. § 45(a)): Federal law requires sellers offering negative-option subscriptions online to provide clear and conspicuous disclosures, obtain express informed consent, and maintain a simple mechanism to stop recurring charges. Conditioning cancellation of an online subscription upon calling customer care, speaking with retention agents, or submitting postal mail frustrates ROSCA's simple-mechanism mandate and constitutes an unfair or deceptive act or practice under FTC Act § 5(a).
 2. State Automatic Renewal Statutes (including Cal. Bus. & Prof. Code § 17602(c), N.Y. Gen. Bus. Law § 527-a, 815 ILCS 601/): State law guarantees consumers enrolled online the right to terminate continuous service exclusively online at will without delay, administrative obstacles, or retention gauntlets.
 
 SPECIFIC UNLAWFUL PROVISIONS IDENTIFIED IN YOUR TERMS:
@@ -46,7 +47,7 @@ ${clausesCitedText}
 MANDATORY DIRECTIVES:
 1. Terminate all recurring billing, memberships, and subscription charges immediately upon receipt of this notice.
 2. Provide written confirmation of this cancellation, with a confirmation or reference number, within 24 business hours.
-3. Do not place my account into any retention queue or subject me to unsolicited counter-offers ("saves"), which are unlawful without prior express consent under 16 CFR § 425.6(b).
+3. Do not place my account into any retention queue or subject me to obstructive counter-offer gauntlets that impede the simple cancellation mechanism required under ROSCA (15 U.S.C. § 8403(3)) and FTC Act § 5(a).
 
 Any subsequent charges levied against my payment method will be treated as unauthorized fraudulent transactions and disputed immediately with my financial institution, with a copy of this statutory notice and a formal complaint submitted to the FTC Bureau of Consumer Protection and the state Attorney General.
 
@@ -62,12 +63,12 @@ Date of Delivery: ${dateStr}${SELF_ADVOCACY_FOOTER}`,
       return {
         type: 'FTCComplaint',
         title: 'Consumer Complaint Draft for FTC & State Attorney General',
-        statutoryBasis: 'FTC Act Section 5 (15 U.S.C. § 45), 16 CFR Part 425, & ROSCA (15 U.S.C. § 8401)',
+        statutoryBasis: 'FTC Act Section 5(a) (15 U.S.C. § 45(a)), ROSCA (15 U.S.C. §§ 8401–8405), & State ARLs',
         recommendedAction: 'Copy and paste into reportfraud.ftc.gov and your state Attorney General Consumer Protection complaint portal.',
         content: `FORMAL CONSUMER PROTECTION REGULATORY COMPLAINT DRAFT
 TO: Federal Trade Commission Bureau of Consumer Protection (reportfraud.ftc.gov)
     State Attorney General - Consumer Protection Division
-STATUTORY BASIS: FTC Act Section 5 (15 U.S.C. § 45), 16 CFR Part 425, and ROSCA (15 U.S.C. § 8401)
+STATUTORY BASIS: FTC Act Section 5(a) (15 U.S.C. § 45(a)) and ROSCA (15 U.S.C. §§ 8401–8405)
 
 1. COMPLAINANT INFORMATION:
 Name: ${subscriber}
@@ -80,8 +81,8 @@ Company Name: ${vendor}
 Transaction Medium: Online Consumer Subscription
 
 3. STATUTORY VIOLATIONS ALLEGED:
-• Violation of 16 CFR § 425.6(a) (Failure to provide simple 'Click-to-Cancel' mechanism; imposition of asymmetric cancellation gauntlets).
-• Violation of 16 CFR § 425.3 & ROSCA (15 U.S.C. § 8403) (Inconspicuous disclosure of recurring negative option terms).
+• Violation of ROSCA (15 U.S.C. § 8403(3)) & FTC Act Section 5(a) (15 U.S.C. § 45(a)) (Failure to provide a simple online mechanism to stop recurring charges; imposition of asymmetric cancellation gauntlets).
+• Violation of ROSCA (15 U.S.C. § 8403(1)–(2)) (Failure to provide clear and conspicuous material terms and obtain express informed consent prior to billing).
 • State Automatic Renewal Law Violations (${payload.jurisdiction} ARL) regarding mandatory advance written reminder notices and friction-free online cancellation.
 
 4. FACTUAL SUMMARY & DECEPTIVE PRACTICE:
@@ -89,10 +90,10 @@ The respondent company, ${vendor}, utilized deceptive subscription renewal archi
 
 ${clausesCitedText}
 
-The respondent made enrollment effortless via online checkout, yet systematically obstructed cancellation by demanding telephonic interaction or administrative hurdles, in direct contravention of the FTC Negative Option Rule.
+The respondent made enrollment effortless via online checkout, yet systematically obstructed cancellation by demanding telephonic interaction or administrative hurdles, in direct contravention of ROSCA (15 U.S.C. § 8403) and FTC Act Section 5(a) (15 U.S.C. § 45(a)).
 
 5. RELIEF REQUESTED:
-I request that the FTC and State Attorney General initiate regulatory inquiry into ${vendor}'s negative option billing practices, mandate compliance with 16 CFR Part 425, and order full restitution of all unauthorized renewal fees.${SELF_ADVOCACY_FOOTER}`,
+I request that the FTC and State Attorney General initiate regulatory inquiry into ${vendor}'s negative option billing practices, mandate compliance with ROSCA (15 U.S.C. § 8403) and FTC Act § 5(a), and order full restitution of all unauthorized renewal fees.${SELF_ADVOCACY_FOOTER}`,
       };
     }
 
@@ -112,7 +113,7 @@ Dear Billing Supervisor:
 This letter constitutes formal notice of dispute and a demand for immediate restitution in the amount of ${disputedAmount} improperly charged to my payment method on or about ${dateStr}.
 
 VIOLATION OF AUTOMATIC RENEWAL LAW:
-Your company enrolled or renewed my account into a continuous service arrangement without complying with statutory mandates under California Business & Professions Code §§ 17600–17606 and the FTC Negative Option Rule (16 CFR Part 425). Specifically, your agreement failed to provide required advance reminder notices and imposed non-compliant cancellation barriers:
+Your company enrolled or renewed my account into a continuous service arrangement without complying with statutory mandates under California Business & Professions Code §§ 17600–17606 and federal ROSCA disclosure and consent requirements (15 U.S.C. § 8403). Specifically, your agreement failed to provide required advance reminder notices and imposed non-compliant cancellation barriers:
 
 ${clausesCitedText}
 

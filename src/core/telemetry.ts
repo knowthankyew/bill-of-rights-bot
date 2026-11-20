@@ -61,7 +61,7 @@ export function getPrivacyClaims(report: PrivacyAuditReport): PrivacyClaims {
         'All subscription audits execute 100% locally in your browser with zero remote network transmission.',
       footerTitle: '100% Local Air-Gapped Subscription Agreement Reality Engine.',
       footerSubtext:
-        'Zero Telemetry • Zero Remote Agreement Egress • FTC Click-to-Cancel & State ARL Reality Engine',
+        'Zero Telemetry • Zero Remote Agreement Egress • ROSCA, FTC Act § 5 & State ARL Reality Engine',
       modalStatusTitle: '100% Local-First & Private (Memory-Only Telemetry)',
       modalStatusDescription:
         'All computation and telemetry spans remain buffered strictly in volatile memory. No outbound network calls are made. Telemetry purges immediately upon invoking "Burn Local Data".',

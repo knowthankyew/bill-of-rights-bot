@@ -1,6 +1,6 @@
 # Architecture Specification: BillOfRightsBot for Subscriptions
 
-**One-liner:** Paste or upload a subscription agreement or Terms of Service (ToS). Get a 100% local-first, statute-grounded breakdown flagging auto-renewal traps, asymmetric cancellation hurdles, and deceptive negative options against the FTC's "Click-to-Cancel" Rule and state auto-renewal statutes—with instant statutory dispute and cancellation notices.
+**One-liner:** Paste or upload a subscription agreement or Terms of Service (ToS). Get a 100% local-first, statute-grounded breakdown flagging auto-renewal traps, asymmetric cancellation hurdles, and deceptive negative options against ROSCA (`15 U.S.C. § 8403`), FTC Act § 5 (`15 U.S.C. § 45(a)`), and state auto-renewal statutes—with instant statutory dispute and cancellation notices.
 
 ---
 
@@ -8,7 +8,7 @@
 
 ### 1.1 Core Principles (The knowthankyew Ethos)
 1. **100% Local-First & Air-Gapped by Design:** Zero terms text, metadata, or consumer telemetry ever leaves the user's local machine. All parsing, evaluation, and document generation execute entirely within the local process and memory. Outbound network connectivity is disabled by default via strict Content Security Policy (CSP).
-2. **Statute-Grounded Truth:** Every flagged clause is directly tied to a specific federal or state statute (e.g., FTC Negative Option Rule 16 CFR Part 425, California Automatic Renewal Law Cal. Bus. & Prof. Code §§ 17600–17606, New York Gen. Bus. Law § 527-a, ROSCA 15 U.S.C. §§ 8401–8405). No hallucinated legal theories, unverified AI assertions, or generic platitudes without statutory lineage.
+2. **Statute-Grounded Truth:** Every flagged clause is directly tied to currently enforceable federal or state statute (e.g., ROSCA `15 U.S.C. §§ 8401–8405`, FTC Act Section 5 `15 U.S.C. § 45(a)`, California Automatic Renewal Law `Cal. Bus. & Prof. Code §§ 17600–17606`, New York Gen. Bus. Law `§ 527-a`). *(Note: 2024 16 CFR Part 425 amendments were vacated July 8, 2025 in Custom Communications v. FTC and are excluded from generated consumer dispute notices.)* No hallucinated legal theories, unverified AI assertions, or generic platitudes without statutory lineage.
 3. **Deterministic Standalone Operation (LLM-Optional):** Fully capable standalone using deterministic regular expressions, structural heading heuristics, and legal domain keyword clustering. If a local model sidecar (such as `event-driven-ftaas` or Ollama / llama.cpp at `http://localhost:8000`) is running, BillOfRightsBot silently enhances nuance detection without errors, timeouts, or UI warnings when absent.
 4. **Actionable Consumer Leverage:** Goes beyond passive highlighting: automatically drafts formal statutory cancellation notices, pre-formatted FTC violation complaints, and refund clawback demands invoking statutory "unconditional gift" protections.
 5. **Ephemerality & Instant Purge:** A dedicated "Burn Local Data" action immediately wipes all memory, parsed state, active DOM nodes, and session storage.
@@ -23,12 +23,12 @@ flowchart TD
         Ingest["Document Ingestion & Text Normalizer\n(Paste, TXT, HTML, PDF/DOCX)"]
         Segmenter["Clause Segmentation Engine\n(Heading & Boundary Tokenizer)"]
         RuleEngine["Statute Rule Evaluation Engine\n(Deterministic Regex & Heuristics)"]
-        DisputeGen["Statutory Remedy & Notice Generator\n(Click-to-Cancel, Refund Clawback, FTC Complaint)"]
+        DisputeGen["Statutory Remedy & Notice Generator\n(Symmetric Cancel, Refund Clawback, FTC Complaint)"]
         BurnAction["'Burn Local Data' Action\n(In-Memory Zeroization & Flush)"]
     end
 
     subgraph Data ["Local Statute Knowledge Store (/data)"]
-        FTCRules["FTC Click-to-Cancel & ROSCA\n(16 CFR Part 425 / 15 U.S.C. 8401)"]
+        FTCRules["ROSCA & FTC Act § 5\n(15 U.S.C. §§ 8401–8405 / § 45(a))"]
         StateRules["State ARL Compendium\n(CA, NY, IL, CO, TX, DE, etc.)"]
     end
 
@@ -100,13 +100,13 @@ BillOfRightsBot targets eight distinct categories of deceptive subscription prac
 
 | Trap ID | Trap Category | Target Practice & Deceptive Pattern | Grounded Statutory Citation |
 | :--- | :--- | :--- | :--- |
-| **TRAP-01** | **Asymmetric Cancellation ("Click-to-Cancel" Violation)** | Requiring consumers who enrolled online to cancel by phone, mail, in-person, or through complex customer service gauntlets. | **FTC Negative Option Rule (16 CFR § 425.6); Cal. Bus. & Prof. Code § 17602(c); N.Y. Gen. Bus. Law § 527-a; ROSCA (15 U.S.C. § 8403)** |
-| **TRAP-02** | **Buried / Inconspicuous Auto-Renewal** | Hiding recurring billing terms in voluminous boilerplate, tiny font sizes, low contrast, or beneath the fold without clear visual prominence. | **FTC 16 CFR § 425.3; Cal. Bus. & Prof. Code § 17602(a)(1); 815 ILCS 601/10; Colo. Rev. Stat. § 6-1-732** |
-| **TRAP-03** | **Absence of Express Affirmative Consent** | Combining acceptance of general ToS with consent to recurring charges, pre-checked boxes, or failing to obtain standalone consent for auto-renewal. | **FTC 16 CFR § 425.4; Cal. Bus. & Prof. Code § 17602(a)(2); Del. Code Ann. tit. 6, § 2734** |
-| **TRAP-04** | **Deceptive Free-Trial-to-Paid Conversion** | Enrolling users in a trial with continuous billing upon expiration without explicit prior reminder notice or clear cancellation deadline disclosure. | **FTC 16 CFR § 425.3(a)(3); Cal. Bus. & Prof. Code § 17602(b); N.Y. Gen. Bus. Law § 527-a; Va. Code Ann. § 59.1-207.45** |
+| **TRAP-01** | **Asymmetric Cancellation ("Click-to-Cancel" Pattern)** | Requiring consumers who enrolled online to cancel by phone, mail, in-person, or through complex customer service gauntlets. | **ROSCA (15 U.S.C. § 8403(3)); FTC Act § 5(a) (15 U.S.C. § 45(a)); Cal. Bus. & Prof. Code § 17602(c); N.Y. Gen. Bus. Law § 527-a** |
+| **TRAP-02** | **Buried / Inconspicuous Auto-Renewal** | Hiding recurring billing terms in voluminous boilerplate, tiny font sizes, low contrast, or beneath the fold without clear visual prominence. | **ROSCA (15 U.S.C. § 8403(1)); FTC Act § 5(a); Cal. Bus. & Prof. Code § 17602(a)(1); 815 ILCS 601/10; Colo. Rev. Stat. § 6-1-732** |
+| **TRAP-03** | **Absence of Express Affirmative Consent** | Combining acceptance of general ToS with consent to recurring charges, pre-checked boxes, or failing to obtain standalone consent for auto-renewal. | **ROSCA (15 U.S.C. § 8403(2)); Cal. Bus. & Prof. Code § 17602(a)(2); Del. Code Ann. tit. 6, § 2734** |
+| **TRAP-04** | **Deceptive Free-Trial-to-Paid Conversion** | Enrolling users in a trial with continuous billing upon expiration without explicit prior reminder notice or clear cancellation deadline disclosure. | **ROSCA (15 U.S.C. § 8403(1)–(2)); FTC Act § 5(a); Cal. Bus. & Prof. Code § 17602(b); N.Y. Gen. Bus. Law § 527-a; Va. Code Ann. § 59.1-207.45** |
 | **TRAP-05** | **Pre-Renewal Window & Lock-in Traps** | Demanding notice 30–60 days in advance of renewal without sending a mandatory statutory renewal reminder notice. | **Cal. Bus. & Prof. Code § 17602(a)(4); N.Y. Gen. Bus. Law § 527-a(2); 815 ILCS 601/10; Colo. Rev. Stat. § 6-1-732** |
-| **TRAP-06** | **Retention Mazes ("Saves Gauntlet")** | Forcing users through required retention surveys, multi-step counter-offers ("saves"), or obstructive delays before executing cancellation. | **FTC 16 CFR § 425.6(b) (Prohibition of unsolicited retention pitches without prior consent)** |
-| **TRAP-07** | **Unilateral Price Escalation Without Re-Consent** | Reserving the right to increase recurring subscription fees automatically without advance notice and an opportunity to cancel before the charge occurs. | **FTC 16 CFR § 425.5; Cal. Bus. & Prof. Code § 17602(d); 15 U.S.C. § 8403** |
+| **TRAP-06** | **Retention Mazes ("Saves Gauntlet")** | Forcing users through required retention surveys, multi-step counter-offers ("saves"), or obstructive delays before executing cancellation. | **FTC Act § 5(a) (15 U.S.C. § 45(a)); ROSCA (15 U.S.C. § 8403(3))** |
+| **TRAP-07** | **Unilateral Price Escalation Without Re-Consent** | Reserving the right to increase recurring subscription fees automatically without advance notice and an opportunity to cancel before the charge occurs. | **FTC Act § 5(a); Cal. Bus. & Prof. Code § 17602(d); ROSCA (15 U.S.C. § 8403)** |
 | **TRAP-08** | **Unlawful Billing & Concealed "Unconditional Gift"** | Charging consumers under non-compliant renewal terms and failing to disclose that unauthorized goods/services constitute an unconditional gift. | **Cal. Bus. & Prof. Code § 17603 (Statutory unconditional gift rule & restitution remedy)** |
 
 ---
@@ -229,7 +229,7 @@ BillOfRightsBot features a cohesive 3-panel consumer defense studio inspired by 
 - Filterable clause cards by severity (Unlawful, Watch, Standard) with highlighted trigger sentences.
 
 ### 6.3 Right Rail: Defense & Remedy Studio
-- **Click-to-Cancel Statutory Notice:** Formally invokes 16 CFR § 425.6 and state online cancellation statutes, instructing the vendor that their cancellation barriers violate law and ordering immediate subscription cessation.
+- **Symmetric Cancellation Statutory Notice:** Formally invokes ROSCA (`15 U.S.C. § 8403(3)`), FTC Act § 5(a) (`15 U.S.C. § 45(a)`), and state online cancellation statutes, instructing the vendor that their cancellation barriers violate law and ordering immediate subscription cessation.
 - **FTC & State AG Violation Complaint Draft:** Pre-formatted consumer complaint detailing specific statutory violations, ready to submit directly to `reportfraud.ftc.gov` or state Attorneys General.
 - **Unconditional Gift Refund Demand:** Invokes California Cal. Bus. & Prof. Code § 17603 or equivalent state laws to demand full reimbursement of unlawful charges, declaring all post-renewal services an unconditional gift.
 - 1-click clipboard copy and unbranded, print-ready CSS (`@media print`) optimized for USPS Certified Mail.

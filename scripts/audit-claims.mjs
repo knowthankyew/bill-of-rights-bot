@@ -55,7 +55,8 @@ const PROHIBITED_WORDS = [
 ];
 
 const REQUIRED_STATUTES = [
-  '16 CFR Part 425',
+  '15 U.S.C. § 8403',
+  '15 U.S.C. § 45',
   '15 U.S.C.',
   '17602',
   '17603',
@@ -64,6 +65,8 @@ const REQUIRED_STATUTES = [
   '6-1-732',
   '2734',
 ];
+
+const VACATED_CFR_PATTERN = /\b16\s*CFR\s*(?:Part\s*|§+\s*)?425(?:\.\d+)?\b/i;
 
 /**
  * Audit 1: Zero-Egress & Air-Gapped Privacy Invariants
@@ -178,21 +181,44 @@ export function auditZeroEgress(errors = []) {
 /**
  * Audit 2: Statutory Reference Parity
  */
-export function auditStatutoryParity(errors = []) {
+export function auditStatutoryParity(
+  errors = [],
+  { overrideNoticeContent = null, overrideRemedyContent = null } = {}
+) {
   const readmePath = resolve(REPO_ROOT, 'README.md');
   const noticeGenPath = resolve(REPO_ROOT, 'src/core/notice-generator.ts');
+  const remedyStudioPath = resolve(REPO_ROOT, 'src/components/RemedyStudio.tsx');
 
   if (!existsSync(readmePath)) {
     errors.push('Missing README.md');
     return;
   }
-  if (!existsSync(noticeGenPath)) {
+  if (overrideNoticeContent === null && !existsSync(noticeGenPath)) {
     errors.push('Missing src/core/notice-generator.ts');
     return;
   }
 
   const readmeContent = readFileSync(readmePath, 'utf-8');
-  const noticeContent = readFileSync(noticeGenPath, 'utf-8');
+  const noticeContent =
+    overrideNoticeContent !== null ? overrideNoticeContent : readFileSync(noticeGenPath, 'utf-8');
+  const remedyContent =
+    overrideRemedyContent !== null
+      ? overrideRemedyContent
+      : existsSync(remedyStudioPath)
+      ? readFileSync(remedyStudioPath, 'utf-8')
+      : '';
+
+  // Reject vacated federal rule citations (16 CFR Part 425) inside consumer-facing dispute templates
+  if (VACATED_CFR_PATTERN.test(noticeContent)) {
+    errors.push(
+      'Vacated statute violation: src/core/notice-generator.ts must not cite vacated 16 CFR Part 425 in generated consumer notices'
+    );
+  }
+  if (VACATED_CFR_PATTERN.test(remedyContent)) {
+    errors.push(
+      'Vacated statute violation: src/components/RemedyStudio.tsx must not cite vacated 16 CFR Part 425 as fallback statutory authority'
+    );
+  }
 
   const policiesDir = resolve(REPO_ROOT, 'policies/jurisdictions');
   let combinedPolicyContent = '';

@@ -117,11 +117,11 @@ describe('Milestone 7 Phase 3: Destination Handoff Intake Bypass (tests/unit/han
         title: 'Negative Option Continuous Billing',
         category: 'AUTO_RENEWAL',
         severity: 'CRITICAL',
-        statuteCode: '16 CFR Part 425',
-        statuteTitle: 'FTC Click-to-Cancel',
+        statuteCode: '15 U.S.C. § 8403',
+        statuteTitle: 'ROSCA Simple Cancellation & Disclosure',
         matchedSnippet: 'Membership renews automatically at $59.99/mo until in-person cancellation.',
         explanation: 'Requires physical certified mail or in-person visits to cancel online signup.',
-        recommendation: 'Demand symmetrical click-to-cancel mechanism under FTC rule.',
+        recommendation: 'Demand symmetrical cancellation mechanism under ROSCA and FTC Act § 5.',
       },
       {
         ruleId: 'ARB-001',
@@ -153,9 +153,9 @@ describe('Milestone 7 Phase 3: Destination Handoff Intake Bypass (tests/unit/han
     const unlawfulClause = report.clauses[0];
     expect(unlawfulClause.heading).toBe('Negative Option Continuous Billing');
     expect(unlawfulClause.severity).toBe('Unlawful');
-    expect(unlawfulClause.statutoryCitation).toBe('16 CFR Part 425');
-    expect(unlawfulClause.statuteSummary).toBe('FTC Click-to-Cancel');
-    expect(unlawfulClause.remedy).toContain('symmetrical click-to-cancel');
+    expect(unlawfulClause.statutoryCitation).toBe('15 U.S.C. § 8403');
+    expect(unlawfulClause.statuteSummary).toBe('ROSCA Simple Cancellation & Disclosure');
+    expect(unlawfulClause.remedy).toContain('symmetrical cancellation');
 
     const watchClause = report.clauses[1];
     expect(watchClause.severity).toBe('Watch');
@@ -181,8 +181,9 @@ describe('Milestone 7 Phase 3: Destination Handoff Intake Bypass (tests/unit/han
     });
 
     expect(notice.content).toContain('Predatory Gym LLC');
-    expect(notice.content).toContain('16 CFR Part 425');
+    expect(notice.content).toContain('15 U.S.C. § 8403');
     expect(notice.content).toContain('Negative Option Continuous Billing');
+    expect(notice.content).not.toMatch(/16\s*CFR\s*(?:Part|§)?\s*425/i);
 
     const clawback = generateStatutoryNotice('UnconditionalGiftClawback', {
       subscriberName: 'Jane Consumer',

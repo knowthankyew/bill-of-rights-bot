@@ -19,7 +19,7 @@ export const RemedyStudio: React.FC<RemedyStudioProps> = ({ auditReport }) => {
   const citedClauses =
     auditReport?.clauses
       .filter((c) => c.severity === 'Unlawful')
-      .map((c) => `${c.heading}: ${c.statutoryCitation || '16 CFR Part 425'} - ${c.trapName || 'Unlawful cancellation hurdle'}`) || [];
+      .map((c) => `${c.heading}: ${c.statutoryCitation || 'ROSCA (15 U.S.C. § 8403) / FTC Act § 5'} - ${c.trapName || 'Unlawful cancellation hurdle'}`) || [];
 
   const notice = generateStatutoryNotice(activeTab, {
     subscriberName,

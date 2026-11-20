@@ -75,6 +75,17 @@ describe('BillOfRightsBot Claims & Privacy Invariant Linter (claims-linter.test.
     expect(errors).toEqual([]);
   });
 
+  it('rejects vacated 16 CFR Part 425 citations in notice generator or RemedyStudio fallbacks', () => {
+    const errors: string[] = [];
+    auditStatutoryParity(errors, {
+      overrideNoticeContent: 'LEGAL BASIS: Violation of 16 CFR § 425.6(a) and 15 U.S.C. § 8403.',
+      overrideRemedyContent: "c.statutoryCitation || '16 CFR Part 425'",
+    });
+    expect(errors.length).toBe(2);
+    expect(errors[0]).toContain('notice-generator.ts');
+    expect(errors[1]).toContain('RemedyStudio.tsx');
+  });
+
   it('prohibits unprovable marketing adjectives across documentation and UI', () => {
     const errors: string[] = [];
     auditVocabulary(errors);

@@ -296,7 +296,7 @@ export const App: React.FC = () => {
                 No Agreement Loaded
               </h3>
               <p style={{ fontSize: '0.85rem', maxWidth: '450px', margin: '0 auto' }}>
-                Paste terms text above, upload an agreement file, or select one of the predatory subscription samples to audit compliance against FTC Click-to-Cancel and state auto-renewal statutes.
+                Paste terms text above, upload an agreement file, or select one of the predatory subscription samples to audit compliance against ROSCA, FTC Act § 5, and state auto-renewal statutes.
               </p>
             </div>
           )}

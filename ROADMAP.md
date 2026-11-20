@@ -11,7 +11,7 @@ The baseline statutory audit studio is fully built, statically verified, and run
 
 - [x] **Air-Gapped Ingestion & Evaluation**: Zero server backend. Terms text, clauses, and consumer inputs are processed entirely in-memory with zero outbound network calls and zero cloud egress.
 - [x] **Statutory Rule Grounding**: Deterministic rule engine evaluating against:
-  - **FTC Negative Option / Click-to-Cancel Rule** (16 CFR Part 425 & 15 U.S.C. § 8403 ROSCA)
+  - **Restore Online Shoppers' Confidence Act (ROSCA, 15 U.S.C. § 8403) & FTC Act § 5 (15 U.S.C. § 45(a))** *(16 CFR Part 425 vacated July 2025; excluded from consumer dispute letters)*
   - **California Automatic Renewal Law** (Cal. Bus. & Prof. Code §§ 17600–17606, AB 390 & AB 2863)
   - **New York Automatic Renewal Law** (N.Y. Gen. Bus. Law § 527-a)
   - **Illinois Automatic Renewal Act** (815 ILCS 601)
@@ -19,7 +19,7 @@ The baseline statutory audit studio is fully built, statically verified, and run
   - **Delaware Auto-Renewal Protections** (Del. Code Ann. tit. 6, § 2734)
 - [x] **100% Local In-Browser Photo OCR**: Vendored Tesseract.js LSTM neural engine in WebAssembly running inside an isolated Web Worker (`/public/ocr/`). Ingests physical contract photos (`.png`, `.jpg`, `.jpeg`, `.webp`, `.bmp`) with real-time recognition progress tracking.
 - [x] **Actionable Remedy Studio**: Automated generation of:
-  - Immediate Click-to-Cancel Demands (16 CFR § 425.6 parity mandate)
+  - Immediate Symmetric Cancellation Demands (ROSCA `15 U.S.C. § 8403(3)` & FTC Act § 5)
   - Pre-formatted FTC & State AG Complaint Drafts
   - California Unconditional Gift Restitution Notices (Cal. Bus. & Prof. Code § 17603)
 - [x] **Amnesiac Burn Local Data**: One-click nuclear purge instantly zeroing in-memory buffers, parsed clauses, active DOM nodes, session storage, and terminating OCR worker threads.
@@ -77,14 +77,14 @@ flowchart TD
 
 ---
 
-## Milestone 2: Universal Extension Handoff Receiver (`v1.2.0`)
+## Milestone 2: Universal Extension Handoff Receiver (`v1.2.0`) ✅
 
 Connect `bill-of-rights-bot` with the `knowthankyew-extension` browser extension via the **Structured Handoff Protocol**:
 
-- [ ] **`useKTYHandoff()` Receiver**: Listen for `KTY_HANDOFF_PAYLOAD` in `sessionStorage` containing pre-scanned checkout domains, detected trap findings, and primary legal links.
-- [ ] **Intake Bypass**: When launched from the browser extension's "Get Help / Dispute" action, skip manual document input and load findings directly into the Scorecard.
-- [ ] **Auto-Drafted Remedies**: Immediately populate the Remedy Studio with the domain name, detected violation dates, and applicable state statutes extracted during the extension's live page scan.
-- [ ] **Cross-Context Amnesia**: Subscribe to `BroadcastChannel('kty_hard_burn')` so nuclear amnesia triggered from the extension or options dashboard immediately clears `sessionStorage` in open tool tabs.
+- [x] **`useKTYHandoff()` Receiver**: Listen for `KTY_HANDOFF_PAYLOAD` in URL fragment (`#kty_handoff=...`) / `sessionStorage` containing pre-scanned checkout domains, detected trap findings, and primary legal links.
+- [x] **Intake Bypass**: When launched from the browser extension's "Get Help / Dispute" action, skip manual document input and load findings directly into the Scorecard.
+- [x] **Auto-Drafted Remedies**: Immediately populate the Remedy Studio with detected violations and applicable active statutes extracted during the extension's live page scan.
+- [x] **Cross-Context Amnesia**: Subscribe to `BroadcastChannel('kty_hard_burn')` so nuclear amnesia triggered from the extension or options dashboard immediately clears `sessionStorage` in open tool tabs.
 
 ---
 
